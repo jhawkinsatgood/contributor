@@ -25,6 +25,7 @@
 #import "DemoConsumeSendEmail.h"
 #import "DemoConsumeTransferFile.h"
 #import "DemoProvideTransferFile.h"
+#import "DemoConsumeOpenHTTPURL.h"
 
 @interface ViewController ()
 @property(strong, nonatomic) MainPage *mainPage;
@@ -56,6 +57,7 @@
                      [infoDictionary objectForKey:@"GDApplicationID"]] ]
     addDemoClasses:@[[DemoConsumeSendEmail class],
                      [DemoConsumeTransferFile class],
+                     [DemoConsumeOpenHTTPURL class],
                      [DemoProvideTransferFile class]] ]
     load];
 }

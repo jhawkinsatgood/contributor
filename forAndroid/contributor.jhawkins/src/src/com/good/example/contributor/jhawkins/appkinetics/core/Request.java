@@ -285,6 +285,7 @@ public class Request implements GDServiceClientListener
     public Request selectProvider(int index)
     {
         store.pathSet(index, "Request", "Provider", "Selected");
+        setApplication(getProviderAddress());
         return this;
     }
     public Request queryProviders()
@@ -350,7 +351,8 @@ public class Request implements GDServiceClientListener
     
     private String getProviderAddress()
     {
-        Integer provideri = store.pathGetInteger("Request", "Provider", "Selected");
+        Integer provideri = store.pathGetInteger(
+                "Request", "Provider", "Selected");
         if (provideri == null) return null;
         return store.pathGetString(
                 "Request", "Provider", "Query", provideri, "address");
@@ -448,21 +450,4 @@ public class Request implements GDServiceClientListener
         
     }
 
-
-    
-    /*  Possible capabilities for this class:
-     *  Implement GDServiceClientListener to:
-     *  - Enable a request to delete its attachments, if that is wanted.
-     *  Facilitate reply to a paired service.
-     *  An implementer of an edit-file provider should have an interface like:
-     *  - Implement a listener that gets invoked
-     *  - The listener should get passed an object with a method for the 
-     *    save-edited-file reply request
-     *  Do this by:
-     *  - In the Request extension, set a pairedService attribute.
-     *  - Have a pairSend method: fishes out the identificationData from the 
-     *    original request (except that is service-specific). Can send a 
-     *    different path back. Fishes out the sender of the original request as 
-     *    the destination of this request.
-     */
 }

@@ -265,6 +265,7 @@
 {
     [store pathSet:[NSNumber numberWithInt:index]
          a:@[@"Request", @"Provider", @"Selected"]];
+    [self setApplication:[self getProviderAddress]];
     return self;
 }
 -(instancetype)queryProviders

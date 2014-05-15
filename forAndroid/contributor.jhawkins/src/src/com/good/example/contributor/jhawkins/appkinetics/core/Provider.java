@@ -23,9 +23,6 @@ package com.good.example.contributor.jhawkins.appkinetics.core;
 
 import java.util.ArrayList;
 
-import com.good.gd.icc.GDService;
-import com.good.gd.icc.GDServiceException;
-
 public class Provider
 {
     private ArrayList<Listener> listeners = null;

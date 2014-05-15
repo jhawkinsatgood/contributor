@@ -30,7 +30,6 @@ public class DemoConsumeTransferFile extends Component {
     
     public DemoConsumeTransferFile() {
         super();
-        request = new RequestTransferFile();
         demoLabel = "Transfer File";
         demoIsActive = true;
         demoNeedsPick = true;
@@ -42,12 +41,15 @@ public class DemoConsumeTransferFile extends Component {
     @Override
     public String[] demoGetPickList()
     {
+        if (request == null) request = new RequestTransferFile();
         return request.queryProviders().getProviderNames();
     }
     
     @Override
     public void demoPickAndExecute(int pickListIndex)
     {
+        if (request == null) request = new RequestTransferFile();
+
         // Generate a file for illustration purposes.
         String filename = this.getClass().getSimpleName() + ".txt";
         String error = Utility.createFilesOrError(filename);
@@ -59,8 +61,13 @@ public class DemoConsumeTransferFile extends Component {
         // Send the request.
         error = request.selectProvider(pickListIndex)
                 .addAttachments(filename).sendOrMessage();
+
+        // Display the error, if any
         if (error != null && userInterface != null) 
             userInterface.demoLog(error);
+        
+        // Discard the request.
+        request = null;
         return;
     }
 }

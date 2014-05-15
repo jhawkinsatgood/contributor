@@ -19,59 +19,54 @@
  * THE SOFTWARE.
  */
 
-#import "DemoConsumeTransferFile.h"
-#import "gdRequestTransferFile.h"
+#import "DemoConsumeOpenHTTPURL.h"
+#import "gdRequestOpenHTTPURL.h"
 
-#import "DemoUtility.h"
-
-@interface DemoConsumeTransferFile()
-@property (strong, nonatomic)gdRequestTransferFile *request;
+@interface DemoConsumeOpenHTTPURL()
+@property (strong, nonatomic) gdRequestOpenHTTPURL *request;
 @end
 
-@implementation DemoConsumeTransferFile
+@implementation DemoConsumeOpenHTTPURL
 
 @synthesize demoLabel, demoIsActive, demoNeedsPick;
 
 -(instancetype)init
 {
     self = [super init];
-    demoLabel = @"Transfer File";
+    _request = [gdRequestOpenHTTPURL new];
+    demoLabel = @"Open HTTP URL";
     demoIsActive = @YES;
-    demoNeedsPick = @YES;
+    demoNeedsPick = @NO;
     return self;
 }
 
--(void)demoExecute { return; }
-
--(NSArray *)demoGetPickList {
-    if (!_request) _request = [gdRequestTransferFile new];
-    return [[_request queryProviders] getProviderNames];
-}
-
--(void)demoPickAndExecute:(int)pickListIndex
+-(void)demoExecute //{ return; }
 {
-    if (!_request) _request = [gdRequestTransferFile new];
-
-    // Generate a file for illustration purposes.
-    NSString *filename = [NSStringFromClass([self class])
-                          stringByAppendingPathExtension:@"txt"];
-    NSString *error = [DemoUtility createFileOrError:filename];
-    if (error) {
-        if (DEMOUI) [DEMOUI demoLogString:error];
-        return;
-    }
-
-    // Send the request.
-    error = [[[_request selectProvider:pickListIndex]
-              addAttachments:@[filename]]
-             sendOrMessage:nil];
-
-    // Display the error, if any
-    if (error && DEMOUI) [DEMOUI demoLogString:error];
-    
-    // Discard the request.
-    _request = nil;
+    // Override the application to the native ID for Good Access
+    // NSString *error =
+    [[[_request setApplication:@"com.good.gdgma"]
+                        setURL:@"http://helpdesk"]
+                       sendOrMessage:nil];
+    if (DEMOUI) [DEMOUI demoLogFormat:@"Sent open HTTP request to gdgma:%@\n",
+                 _request];
     return;
 }
+
+// Real code to be uncommented when used with Good Access 1.1.0.0 which is
+// registered as a service provider.
+// At that time it will also be necessary to set demoNeedsPick YES
+//-(NSArray *)demoGetPickList {
+//    return [[_request queryProviders] getProviderNames];
+//}
+//
+//-(void)demoPickAndExecute:(int)pickListIndex
+//{
+//    // Send the request.
+//    NSString *error = [[[_request selectProvider:pickListIndex]
+//                        setURL:@"http://helpdesk"]
+//                       sendOrMessage:nil];
+//    if (DEMOUI) [DEMOUI demoLogFormat:@"Sent open HTTP request:%@\n", _request];
+//    return;
+//}
 
 @end

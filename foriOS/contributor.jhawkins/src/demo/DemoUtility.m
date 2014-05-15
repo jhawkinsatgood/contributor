@@ -140,13 +140,21 @@
     // Use the simple read-at-once API, rather than the stream-based API.
     NSData *readResult = [GDFileSystem readFromFile:filepath error:&err];
     if (readResult) {
-        // Get the initial bytes into a C-string, null-terminate and return.
-        char str[80];
-        unsigned int str_siz = sizeof str / sizeof str[0];
-        [readResult getBytes:str length:str_siz];
-        str[readResult.length < str_siz ? readResult.length : str_siz - 1] = '\0';
-        return [NSString stringWithFormat:@"Read %d bytes OK: \"%s\".\n",
-                readResult.length, str];
+        NSMutableString *ret = [NSMutableString new];
+        char *reader = (char *)[readResult bytes];
+        int bytes_read = 0;
+        while ( bytes_read < 80 && bytes_read < readResult.length && reader) {
+            if (*reader >= ' ' && *reader <= '~') {
+                [ret appendFormat:@"%c", *reader];
+            }
+            else {
+                [ret appendFormat:@"\\x%02X", * reader];
+            }
+            reader++;
+            bytes_read++;
+        }
+        return [NSString stringWithFormat:@"Read %d bytes OK: \"%@\".\n",
+                bytes_read, ret];
     }
     return [NSString stringWithFormat:@"Failed to read file \"%@\". %@.\n",
             filepath, err];

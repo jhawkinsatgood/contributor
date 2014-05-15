@@ -104,7 +104,12 @@ public class Utility {
             int readi;
             int maxbytes = 80;
             while ( (readi = receivedStream.read()) > 0  && maxbytes-- > 0 ) {
-                str.append((char)readi);
+                if (readi >= (int)' ' && readi <= (int)'~') {
+                    str.append((char)readi);
+                }
+                else {
+                    str.append("\\x").append(Integer.toHexString(readi));
+                }
             }
             receivedStream.close();
         } catch (FileNotFoundException e) {

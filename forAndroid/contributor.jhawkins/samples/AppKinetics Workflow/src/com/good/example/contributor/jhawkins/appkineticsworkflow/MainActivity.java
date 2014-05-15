@@ -29,6 +29,7 @@ import android.webkit.WebView;
 
 import android.app.Activity;
 
+import com.good.example.contributor.jhawkins.demo.DemoConsumeOpenHTTPURL;
 import com.good.example.contributor.jhawkins.demo.DemoConsumeSendEmail;
 import com.good.example.contributor.jhawkins.demo.DemoConsumeTransferFile;
 import com.good.example.contributor.jhawkins.demo.DemoProvideTransferFile;
@@ -86,6 +87,7 @@ public class MainActivity extends Activity implements GDStateListener {
             .addDemoClasses(
                     DemoConsumeSendEmail.class,
                     DemoConsumeTransferFile.class,
+                    DemoConsumeOpenHTTPURL.class,
                     DemoProvideTransferFile.class)
             .load();
         }
