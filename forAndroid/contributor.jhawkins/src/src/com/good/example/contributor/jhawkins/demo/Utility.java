@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import com.good.gd.file.FileInputStream;
 import com.good.gd.file.FileOutputStream;
@@ -99,17 +100,19 @@ public class Utility {
     public static String byteDump(String filepath)
     {
         StringBuilder str = new StringBuilder("");
+        int bytes_read = 0;
         try {
             FileInputStream receivedStream = new FileInputStream(filepath);
             int readi;
-            int maxbytes = 80;
-            while ( (readi = receivedStream.read()) > 0  && maxbytes-- > 0 ) {
+            while ( (readi = receivedStream.read()) >= 0  && bytes_read < 80 ) {
                 if (readi >= (int)' ' && readi <= (int)'~') {
                     str.append((char)readi);
                 }
                 else {
-                    str.append("\\x").append(Integer.toHexString(readi));
+                    str.append("\\x").append(
+                            String.format((Locale)null, "%02X", readi));
                 }
+                bytes_read++;
             }
             receivedStream.close();
         } catch (FileNotFoundException e) {
@@ -117,7 +120,7 @@ public class Utility {
         } catch (IOException e) {
             return "Could not read \"" + filepath + "\". " + e + "\n";
         }
-        return "Read " + str.length() + " bytes OK \"" + str.toString() + "\".";
+        return "Read " + bytes_read + " bytes OK \"" + str.toString() + "\".";
     }
     
 }

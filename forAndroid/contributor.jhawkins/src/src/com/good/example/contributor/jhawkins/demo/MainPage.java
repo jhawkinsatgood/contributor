@@ -24,6 +24,7 @@ package com.good.example.contributor.jhawkins.demo;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.good.example.contributor.jhawkins.demoframework.Component;
@@ -221,6 +222,23 @@ public class MainPage implements UserInterface {
             return mainPage.handleCommand(command, parameter);
         }
     }
+    
+    static final String HTMLnlSources[] = {      "\r\n",   "\n"     };
+    static final String HTMLnlDestinations[] = { "<br />", "<br />" };
+    static String HTMLreplace(String str, Boolean newlines)
+    {
+        String ret = TextUtils.htmlEncode(str);
+        // It seems that TextUtils.replace only replaces the first occurrence of
+        // each string in the map. So we replace in a loop until nothing 
+        // changes.
+        if (newlines) for(;;) {
+            String retnl = TextUtils.replace(ret, 
+                    HTMLnlSources, HTMLnlDestinations).toString();
+            if (retnl.equals(ret)) break;
+            ret = retnl;
+        }
+        return ret;
+    }
 
     private String _commandHTML( String command, String label, String value ) {
         return "<span class=\"command\" onclick=\"" + jsObjectName + 
@@ -291,7 +309,8 @@ public class MainPage implements UserInterface {
         }
         if (results != null) {
             pageHTML.append(
-                    "<div class=\"holder\"><pre>" + results + "</pre><div>" + 
+                    "<div class=\"holder\"><pre>" + 
+                    HTMLreplace(results, true) + "</pre><div>" + 
                     commandHTML("CLEAR", "&lt; Clear") + "</div></div>");
         }
         
@@ -309,8 +328,8 @@ public class MainPage implements UserInterface {
             String ctrlname = "savearea";
             pageHTML.append(
                     "\n<div class=\"holder\"><textarea name=\"" + 
-                            ctrlname + "\" id=\"" + ctrlname + 
-                    "\">" + editData + "</textarea></div><div>" + 
+                            ctrlname + "\" id=\"" + ctrlname + "\">" + 
+                    HTMLreplace(editData, false) + "</textarea></div><div>" + 
                     commandHTML("discard", "&lt; Discard") +
                     commandHTML("save", "Save &gt;", ctrlname) + "</div>");
         }
