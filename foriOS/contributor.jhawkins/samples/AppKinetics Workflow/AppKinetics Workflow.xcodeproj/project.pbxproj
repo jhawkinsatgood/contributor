@@ -25,7 +25,6 @@
 		92C96BD51922096A0092DBE8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C96BD41922096A0092DBE8 /* AppDelegate.m */; };
 		92C96BD81922096A0092DBE8 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BD61922096A0092DBE8 /* Main_iPhone.storyboard */; };
 		92C96BDB1922096A0092DBE8 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BD91922096A0092DBE8 /* Main_iPad.storyboard */; };
-		92C96BE11922096B0092DBE8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C96BE01922096B0092DBE8 /* ViewController.m */; };
 		92C96BE31922096B0092DBE8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BE21922096B0092DBE8 /* Images.xcassets */; };
 		92C96C0219220CB80092DBE8 /* GDAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 92C96C0119220CB80092DBE8 /* GDAssets.bundle */; };
 		92C96C5719220D8A0092DBE8 /* gdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C96C2119220D8A0092DBE8 /* gdDispatcher.m */; };
@@ -69,8 +68,6 @@
 		92C96BD41922096A0092DBE8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		92C96BD71922096A0092DBE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		92C96BDA1922096A0092DBE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
-		92C96BDC1922096A0092DBE8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		92C96BE01922096B0092DBE8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		92C96BE21922096B0092DBE8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		92C96BE91922096B0092DBE8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		92C96C0119220CB80092DBE8 /* GDAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GDAssets.bundle; path = System/Library/Frameworks/GD.framework/Resources/GDAssets.bundle; sourceTree = SDKROOT; };
@@ -171,8 +168,6 @@
 				92C96C0319220D8A0092DBE8 /* contributor.jhawkins */,
 				92C96BD31922096A0092DBE8 /* AppDelegate.h */,
 				92C96BD41922096A0092DBE8 /* AppDelegate.m */,
-				92C96BDC1922096A0092DBE8 /* ViewController.h */,
-				92C96BE01922096B0092DBE8 /* ViewController.m */,
 				92C96BE21922096B0092DBE8 /* Images.xcassets */,
 				92C96BDD1922096B0092DBE8 /* Resources */,
 				92C96BCB1922096A0092DBE8 /* Supporting Files */,
@@ -377,7 +372,6 @@
 				92C96C5E19220D8A0092DBE8 /* gdRequestSendEmail.m in Sources */,
 				92C96C5719220D8A0092DBE8 /* gdDispatcher.m in Sources */,
 				92C96C6619220D8A0092DBE8 /* DemoUtility.m in Sources */,
-				92C96BE11922096B0092DBE8 /* ViewController.m in Sources */,
 				92C96C6719220D8A0092DBE8 /* MainPage.m in Sources */,
 				92C96C6119220D8A0092DBE8 /* DemoConsumeSendEmail.m in Sources */,
 				92C96C5F19220D8A0092DBE8 /* gdRequestTransferFile.m in Sources */,

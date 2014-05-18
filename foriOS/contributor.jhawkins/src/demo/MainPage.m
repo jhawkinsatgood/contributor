@@ -37,7 +37,6 @@
 
 @implementation MainPage
 
-UIWebView *uiWebView;
 NSString *backgroundColour = @"LightYellow";
 NSString *title = @"MainPage";
 NSString *information = nil;
@@ -100,13 +99,6 @@ NSMutableArray *demos = nil;
 -(instancetype)addDemoClassNamed:(char *)classname
 {
     return [self addDemoClass:objc_getClass(classname)];
-}
-
--(instancetype)setWebView:(UIWebView *)myUIWebView
-{
-    uiWebView = myUIWebView;
-    [uiWebView setDelegate:self];
-    return self;
 }
 
 -(instancetype)setBackgroundColour:(NSString *)myBackgroundColour
@@ -339,7 +331,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 
 -(instancetype)reloadHTML
 {
-    if (!uiWebView) return self;
+    if (!_uiWebView) return self;
     
     NSMutableString *pageHTML = [NSMutableString
                                  stringWithFormat:@"%@%@%@%@%@%@%@",
@@ -409,7 +401,6 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     "</head><body>"
     "<h1 id=\"h1\">", title, @"</h1><div class=\"information\">",
      (information == nil ? @"" : information), @"</div>" ];
-//[[GDiOS sharedInstance] getVersion]
     if (results) {
         [pageHTML appendFormat:@"<div class=\"holder\"><pre>%@</pre>%@</div>",
          [MainPage HTMLreplace:results newlines:YES],
@@ -445,8 +436,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     }
 
     [pageHTML appendString:@"</body></html>"];
-
-    [uiWebView loadHTMLString:pageHTML baseURL:nil];
+    [_uiWebView loadHTMLString:pageHTML baseURL:nil];
     return self;
 }
 

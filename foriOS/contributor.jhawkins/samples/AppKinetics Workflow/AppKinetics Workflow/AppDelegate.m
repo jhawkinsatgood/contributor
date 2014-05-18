@@ -20,10 +20,17 @@
  */
 
 #import "AppDelegate.h"
-#import "ViewController.h"
+#import "MainPage.h"
+#import "DemoConsumeSendEmail.h"
+#import "DemoConsumeTransferFile.h"
+#import "DemoProvideTransferFile.h"
+#import "DemoConsumeOpenHTTPURL.h"
+
+@interface AppDelegate()
+-(void)launchUI;
+@end
 
 @implementation AppDelegate
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 { 
@@ -149,7 +156,7 @@
 			if (!started) {
 				// launch application UI here
 				started = YES;
-                [(ViewController *)self.window.rootViewController didAuthorize];
+                [self launchUI];
 			}
 			break;
 		}
@@ -158,5 +165,21 @@
 			break;
 	}
 }
-			
+
+-(void)launchUI
+{
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    [[[[[(MainPage *) self.window.rootViewController
+         setBackgroundColour:@"DarkSeaGreen"]
+        setTitle:[infoDictionary objectForKey:@"CFBundleDisplayName"]]
+       setInformation:[NSString stringWithFormat:@"%@ %@",
+                       [[GDiOS sharedInstance] getVersion],
+                       [infoDictionary objectForKey:@"GDApplicationID"]] ]
+      addDemoClasses:@[[DemoConsumeSendEmail class],
+                       [DemoConsumeTransferFile class],
+                       [DemoConsumeOpenHTTPURL class],
+                       [DemoProvideTransferFile class]] ]
+     load];
+}
+
 @end

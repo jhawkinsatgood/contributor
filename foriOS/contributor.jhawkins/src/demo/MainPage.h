@@ -20,14 +20,15 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <UIKit/UIWebView.h>
 #import "DemoUserInterface.h"
 
-@interface MainPage : NSObject <UIWebViewDelegate, DemoUserInterface>
+@interface MainPage : UIViewController <UIWebViewDelegate, DemoUserInterface>
+@property (strong, nonatomic) IBOutlet UIWebView *uiWebView;
 -(instancetype)addDemoClass:(Class)class;
 -(instancetype)addDemoClasses:(NSArray *)classes;
 -(instancetype)addDemoClassNamed:(char *)demo;
--(instancetype)setWebView:(UIWebView *)myUIWebView;
 -(instancetype)setBackgroundColour:(NSString *)myBackgroundColour;
 -(instancetype)setTitle:(NSString *)myTitle;
 -(instancetype)setInformation:(NSString *)information;
