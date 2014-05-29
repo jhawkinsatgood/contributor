@@ -7,7 +7,9 @@ To create sample application for the Good Dynamics PhoneGap Plugin:
 1. cd to this samples/ directory in your copy.
 1. Run the build.sh script. Specify the directory in which you extracted the Plugin download as the command line
    parameter. Like this:
-       ./build.sh /path/to/plugindownload
+
+           ./build.sh /path/to/plugindownload
+
 1. This will create the sample application (only one at time of writing) in a sub-directory.
 
 It's a good idea to edit the top of the build.sh script. See the comments there for what to populate.
