@@ -8,11 +8,19 @@ This repository contains Good Dynamics&trade; contributor sample code. Good Dyna
 
 #### Directory Structure
 
-There are two sub-directories in the repository: `forAndroid/` and `foriOS/`
+There are three sub-directories in the repository: `forAndroid/`, `foriOS/`, and `forPhoneGap/`.
 
-Under each of those there are another couple of sub-directories:  
+Under each of the directories for Android and iOS there are another couple of
+sub-directories:  
 `src/` which contains common code.  
 `samples/` which contains sample applications that use the common code.
+
+Under the directory for PhoneGap there are three sub-directories:  
+`src/` which contains common code and a copy of the sample application code.  
+`samples/` which contains a script that can be used to create the sample
+application.  
+`scripts/` which contains handy copies of the GD enabling scripts from the GD
+download for PhoneGap with fixes by contributors to this repository.
 
 At the moment there is only one sample application: AppKinetics Workflow
 
@@ -36,5 +44,10 @@ To use the sample applications and code for iOS with Xcode for the first time, t
 1. Remove the existing `GDAssets.bundle` reference and replace with a reference to your own. Link the resources in the usual way; do not copy them.
 
 The samples for iOS are now ready to use. You can run the AppKinetics Workflow sample application on a simulator or real device.
+
+#### Using the sample applications for PhoneGap
+
+To use the sample applications and code for PhoneGap, see the README file in the
+samples sub-directory.
 
 ### More later...
