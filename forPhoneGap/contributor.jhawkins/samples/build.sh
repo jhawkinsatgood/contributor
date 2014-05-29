@@ -294,8 +294,8 @@ function rebuild()
     fi
 
     # Uncomment the following to remove and re-add the example plugin
-    cordova plugin remove com.good.example.contributor.jhawkins
-    cordova plugin add ../../src/com.good.example.contributor.jhawkins
+    #cordova plugin remove com.good.example.contributor.jhawkins
+    #cordova plugin add ../../src/com.good.example.contributor.jhawkins
 
     if test -d platforms/android ;
     then
