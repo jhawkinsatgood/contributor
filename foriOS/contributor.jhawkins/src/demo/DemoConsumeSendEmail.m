@@ -54,6 +54,12 @@
     // Create a request object.
     gdRequestSendEmail *request = [gdRequestSendEmail new];
 
+    // Execute a service discovery query to find the provider.
+    // It's OK to select the first one, because GFE is the only provider.
+    [[request queryProviders] getProviderNames];
+    [request selectProvider:0];
+    
+    
     // Add all parameters and send the request.
     [[[[[[[request
     addToAddresses:@[ @"diagnostic.to_address.one@example.com",
