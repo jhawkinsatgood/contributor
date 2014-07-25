@@ -71,21 +71,21 @@ function parseOpts()
             usage
             exit 5
           fi
-          OPT_APP_ID=${idName}
+          OPT_APP_ID="${idName}"
           # Shift to next parameter.
           shift;shift;
           continue
           ;;
         -c)
-          if [ -z "$2" ] || [ $2 = "" ] || [ $2 = "-i" ] || [ $2 = "-g" ] || [ $2 = "-p" ]; then
+          if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-i" ] || [ "$2" = "-g" ] || [ "$2" = "-p" ]; then
             echoColor $TERM_COLOR_RED "Company identifier must have a value."
             usage
             exit 6
           fi
-          companyId=$2
+          companyId="$2"
           # Like Apple's template, just convert non-standard Company Identifier characters to dashes, and cull leading periods.
-          companyId=`echo ${companyId} | sed -e 's/^\.\.*//g' | sed -e 's/[^a-zA-Z0-9\.]/-/g'`
-          OPT_COMPANY_ID=${companyId}
+          companyId=`echo "${companyId}" | sed -e 's/^\.\.*//g' | sed -e 's/[^a-zA-Z0-9\.]/-/g'`
+          OPT_COMPANY_ID="${companyId}"
           # Shift to next parameter.
           shift;shift;
           continue
@@ -103,7 +103,7 @@ function parseOpts()
             usage
             exit 5
           fi
-          OPT_ORG_NAME=${orgName}
+          OPT_ORG_NAME="${orgName}"
           # Shift to next parameter.
           shift;shift;
           continue
@@ -116,9 +116,9 @@ function parseOpts()
           fi
           projectPath="$2"        
           FILES=`find "$projectPath/" -maxdepth 1 -name \*.xcodeproj`
-          OPT_APP_NAME=`basename "$FILES" | cut -d. -f1`       
+          OPT_APP_NAME=`basename $FILES | cut -d. -f1`       
         
-          OPT_PROJECT_PATH=${projectPath}
+          OPT_PROJECT_PATH="${projectPath}"
           # Shift to next parameter.
           shift;shift;
           continue
@@ -204,6 +204,9 @@ function replaceTokens()
   local inputConfigXMLwww="${appNameToken}/www/config.xml"
   local inputConfigXMLProject="${appNameToken}/${appNameToken}/config.xml"
 
+  # Storing previous html page
+  cp -R "${outputFolderAbsPath}/www/index.html" "${workingFolder}"
+
   # App name
   tokenSubstituteInFile "${inputPrefixFile}" "${appNameToken}" "${OPT_APP_NAME}"
   tokenSubstituteInFile "${inputProjectFile}" "${appNameToken}" "${OPT_APP_NAME}"
@@ -237,6 +240,16 @@ function replaceTokens()
   mv "${outputFolderAbsPath}/${OPT_APP_NAME}" "${outputFolderAbsPath}/temp"
   cp -R "${outputFolderAbsPath}/temp/" "${outputFolderAbsPath}"
   rm -rf "${outputFolderAbsPath}/temp"
+
+  cp -R "${workingFolder}/index.html" "${outputFolderAbsPath}/www"
+  #Restoring previous html page
+  sed -i -e 's/<script type="text\/javascript" src="cordova.js"><\/script>/<script type="text\/javascript" src="cordova.js"><\/script>\
+      <script type="text\/javascript" src="GoodDynamics.js"><\/script>/g' "${outputFolderAbsPath}/www/index.html"
+
+  sed -i -e 's/<script type="text\/javascript" charset="utf-8" src="cordova.js"><\/script>/<script type="text\/javascript" charset="utf-8" src="cordova.js"><\/script>\
+      <script type="text\/javascript" src="GoodDynamics.js"><\/script>/g' "${outputFolderAbsPath}/www/index.html"
+
+  rm -rf "${outputFolderAbsPath}/www/index.html-e"
 
   # Remove working artifacts
   cd "${origWorkingFolder}"

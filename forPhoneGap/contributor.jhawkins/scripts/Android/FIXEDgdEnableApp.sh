@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -24,6 +24,9 @@ COLOR_MAGENTA="\x1b[35;1m"
 COLOR_CYAN="\x1b[36;1m"
 COLOR_RESET="\x1b[0m"
 
+FILE_PLUGIN_INSTALLED=false
+
+
 function echoColor
 {
   echo -e "$1$2$COLOR_RESET"
@@ -34,36 +37,52 @@ function usage()
     echoColor $COLOR_CYAN "Usage:"
     echoColor $COLOR_MAGENTA "$0"
     echoColor $COLOR_MAGENTA "   -g <Organization Name> (your company's/organization's name)"
-  	echoColor $COLOR_MAGENTA "   -i <Application Package> (com.application.package)"
+    echoColor $COLOR_MAGENTA "   -i <Application Package> (com.application.package)"
     echoColor $COLOR_MAGENTA "   -n <Application Name> (ApplicationName)"
     echoColor $COLOR_MAGENTA "   -p <Path to Project>"
 }
 
 function parseOptions()
 {
-	while [ "$1" != "" ]; do
-    	case $1 in
-        	-p)
-				if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-g" ] || [ "$2" = "-i" ] || [ "$2" = "-n" ]; then
-					echoColor $COLOR_RED "Path to project must have a value."
+    local CORDOVA_PATH=`which cordova`
+    if [[ "${CORDOVA_PATH}" == "" ]]; then
+        echoColor $COLOR_RED "Can't find cordova CLI. Make sure it's installed correctly"
+        exit
+    fi
+    
+    while [ "$1" != "" ]; do
+        case $1 in
+            -p)
+                if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-g" ] || [ "$2" = "-i" ] || [ "$2" = "-n" ]; then
+                    echoColor $COLOR_RED "Path to project must have a value."
                     usage
-					exit
-				fi
+                    exit
+                fi
 
-				FILES=`find "$2"/ -maxdepth 1 -name AndroidManifest.xml`
-				if [ -z "$FILES" ] || [ "$FILES" = "" ]; then
-					 echoColor $COLOR_RED "Can't find Android project in path - $2"
+                if [ ! -d "$2" ]; then
+                    echoColor $COLOR_RED "$2 Directory doesn't exist"
+                    usage
+                    exit
+                fi
+                
+                local original_path=`pwd`
+                cd "$2"
+                FULL_PATH=`pwd`
+                cd "$original_path"
+                FILES=`find "$FULL_PATH"/ -maxdepth 1 -name AndroidManifest.xml`
+                if [ -z "$FILES" ] || [ "$FILES" = "" ]; then
+                     echoColor $COLOR_RED "Can't find Android project in path - $FULL_PATH"
                      usage
                      exit
-				fi
+                fi
 
-				PROJECT_PATH="$2"
+                PROJECT_PATH="$FULL_PATH"
 
-				# Shift to next parameter.
-            	shift;shift;
+                # Shift to next parameter.
+                shift;shift;
 
-            	continue
-            	;;
+                continue
+                ;;
             -n)
                 if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-g" ] || [ "$2" = "-i" ] || [ "$2" = "-p" ]; then
                     echoColor $COLOR_RED "Application name must have a value."
@@ -86,69 +105,69 @@ function parseOptions()
 
                 continue
                 ;;
-        	-g)
-				if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-p" ] || [ "$2" = "-i" ] || [ "$2" = "-n" ]; then
-					echoColor $COLOR_RED "Organization name must have a value."
+            -g)
+                if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-p" ] || [ "$2" = "-i" ] || [ "$2" = "-n" ]; then
+                    echoColor $COLOR_RED "Organization name must have a value."
                     usage
-					exit
-				fi
+                    exit
+                fi
 
-            	ORGRANIZATION_NAME="$2"
+                ORGRANIZATION_NAME="$2"
 
-            	# Shift to next parameter.	
-            	shift;shift;
+                # Shift to next parameter.  
+                shift;shift;
 
-            	continue
-            	;;
+                continue
+                ;;
             -i)
-				if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-g" ] || [ "$2" = "-p" ] || [ "$2" = "-n" ]; then
-					echoColor $COLOR_RED "Application Package must have a value."
+                if [ -z "$2" ] || [ "$2" = "" ] || [ "$2" = "-g" ] || [ "$2" = "-p" ] || [ "$2" = "-n" ]; then
+                    echoColor $COLOR_RED "Application Package must have a value."
                     usage
-					exit
-				fi
+                    exit
+                fi
 
-            	APPLICATION_PACKAGE="$2"
+                APPLICATION_PACKAGE="$2"
 
-            	noSpecialCharsAppName=`echo "${APPLICATION_PACKAGE}" | sed 's/[^a-z0-9\.]//g'`
+                noSpecialCharsAppName=`echo "${APPLICATION_PACKAGE}" | sed 's/[^a-z0-9\.]//g'`
 
-          		if [[ "${noSpecialCharsAppName}" != "${APPLICATION_PACKAGE}" ]]; then
-              		echoColor $COLOR_RED "Application package (${APPLICATION_PACKAGE}) cannot contain special characters.  Only small letters, numbers, and the '.' character."
-              		usage
-              		exit
-          		fi
+                if [[ "${noSpecialCharsAppName}" != "${APPLICATION_PACKAGE}" ]]; then
+                    echoColor $COLOR_RED "Application package (${APPLICATION_PACKAGE}) cannot contain special characters.  Only small letters, numbers, and the '.' character."
+                    usage
+                    exit
+                fi
 
-            	# Shift to next parameter.	
-            	shift;shift;
+                # Shift to next parameter.  
+                shift;shift;
 
-            	continue
-            	;;
-        	--)                                                                 
-            	# no more arguments to parse                                
-            	break      
-            	;;
-        	*)
-      			echoColor $COLOR_RED "ERROR: unknown parameter \"$1\"."
-            	usage
-            	exit 1
-            	;;
-    	esac
-	done
+                continue
+                ;;
+            --)                                                                 
+                # no more arguments to parse                                
+                break      
+                ;;
+            *)
+                echoColor $COLOR_RED "ERROR: unknown parameter \"$1\"."
+                usage
+                exit 1
+                ;;
+        esac
+    done
 
-	if [[ "${PROJECT_PATH}" == "" ]]; then
-		echoColor $COLOR_RED "No option specified for Project path."
-    	usage
-    	exit
-	fi
+    if [[ "${PROJECT_PATH}" == "" ]]; then
+        echoColor $COLOR_RED "No option specified for Project path."
+        usage
+        exit
+    fi
 
-	if [[ "${ORGRANIZATION_NAME}" == "" ]]; then
-		echoColor $COLOR_RED "No option specified for Organization Name."
-    	usage
-    	exit
-	fi
-	if [[ "${APPLICATION_PACKAGE}" == "" ]]; then
-      	echoColor $COLOR_RED "No option specified for Application Package."
-      	usage
-      	exit
+    if [[ "${ORGRANIZATION_NAME}" == "" ]]; then
+        echoColor $COLOR_RED "No option specified for Organization Name."
+        usage
+        exit
+    fi
+    if [[ "${APPLICATION_PACKAGE}" == "" ]]; then
+        echoColor $COLOR_RED "No option specified for Application Package."
+        usage
+        exit
     fi
     if [[ "${APPLICATION_NAME}" == "" ]]; then
         echoColor $COLOR_RED "No option specified for Application Name."
@@ -159,7 +178,7 @@ function parseOptions()
 
 function changeRootFiles()
 {
-	echoColor $COLOR_YELLOW "Updating app in ${PROJECT_PATH}"
+    echoColor $COLOR_YELLOW "Updating app in ${PROJECT_PATH}"
     rm "$PROJECT_PATH/AndroidManifest.xml"
     cp "$ORIGINAL_PATH/Files/AndroidManifest.xml" "$PROJECT_PATH/"
     chmod 777 "$PROJECT_PATH/AndroidManifest.xml"
@@ -197,19 +216,12 @@ function changeSourcesFolder()
 function changeAssetsFolder()
 {
     ASSETS_PATH="$PROJECT_PATH/assets"
+    WWW_PATH="$ASSETS_PATH/www"
     cp "$ORIGINAL_PATH/Files/assets/settings.json" "$ASSETS_PATH/"
 
     # Replace package name with our.
     sed -i -e 's/applicationPackage/'${APPLICATION_PACKAGE}'/g' "$ASSETS_PATH/settings.json"
     rm -rf "$ASSETS_PATH/settings.json-e"
-
-    WWW_PATH="$ASSETS_PATH/www"
-    cp "$ORIGINAL_PATH/Files/assets/www/GoodDynamics.js" "$WWW_PATH/"
-    rm -rf "$WWW_PATH/index.html"
-    cp -Rf "$ORIGINAL_PATH/Files/assets/www/index.html" "$WWW_PATH/index.html" 
-    chmod 777 "$WWW_PATH/index.html"
-    sed -i -e 's/applicationName/'${APPLICATION_NAME}'/g' "$WWW_PATH/index.html"
-    rm -rf "$WWW_PATH/index.html-e"
 
     rm -rf "$WWW_PATH/config.xml"
     cp -Rf "$ORIGINAL_PATH/Files/assets/www/config.xml" "$WWW_PATH/config.xml" 
@@ -218,14 +230,10 @@ function changeAssetsFolder()
     sed -i -e 's/applicationName/'${APPLICATION_NAME}'/g' "$WWW_PATH/config.xml"
     rm -rf "$WWW_PATH/config.xml-e"
 
+    cp "$ORIGINAL_PATH/Files/assets/www/GoodDynamics.js" "$WWW_PATH/"
+
     chmod 777 "$WWW_PATH/GoodDynamics.js"
     chmod 777 "$WWW_PATH/index.html"
-
-    cp -Rf "$ORIGINAL_PATH/Files//res/xml/config.xml" "$PROJECT_PATH/res/xml/config.xml"
-    chmod 777 "$PROJECT_PATH/res/xml/config.xml"
-    sed -i -e 's/applicationPackage/'${APPLICATION_PACKAGE}'/g' "$PROJECT_PATH/res/xml/config.xml"
-    sed -i -e 's/applicationName/'${APPLICATION_NAME}'/g' "$PROJECT_PATH/res/xml/config.xml"
-    rm -rf "$PROJECT_PATH/res/xml/config.xml-e"
 }
 
 function addDependencies()
@@ -233,7 +241,7 @@ function addDependencies()
     echoColor $COLOR_YELLOW "Adding libraries dependencies..."
     #cd "$ORIGINAL_PATH"
     #cd ..
-    cd $HOME/adt/sdk/extras/good/dynamics_sdk/libs
+    cd /Users/jhawkins/adt/sdk/extras/good/dynamics_sdk/libs/
     if ! [ -d "./gd" ]; then
         echoColor $COLOR_RED "Can't find GD Core library in path - `pwd`"
         exit
@@ -248,10 +256,61 @@ function addDependencies()
     rm -rf "$PROJECT_PATH/gd/local.properties"
 }
 
+function parseXml()
+{
+    #Gettings array of previously installed plugins
+    local PLUGINS=`grep -ro '<param[ \t].*value="\([^"]*\)"' "$PROJECT_PATH/res/xml/config.xml" | grep -o 'value="[^"]*"' | cut -f2 -d'"'`
+
+    cp -Rf "$ORIGINAL_PATH/Files//res/xml/config.xml" "$PROJECT_PATH/res/xml/config.xml"
+    chmod 777 "$PROJECT_PATH/res/xml/config.xml"
+    sed -i -e 's/applicationPackage/'${APPLICATION_PACKAGE}'/g' "$PROJECT_PATH/res/xml/config.xml"
+    sed -i -e 's/applicationName/'${APPLICATION_NAME}'/g' "$PROJECT_PATH/res/xml/config.xml"
+    rm -rf "$PROJECT_PATH/res/xml/config.xml-e"
+    
+    cd "$PROJECT_PATH/../.."    
+    for PLUGIN in $PLUGINS
+    do
+        if [[ $PLUGIN == *org.apache.cordova.*.* ]]
+        then
+            local PLUGIN_FOR_INSTALL=${PLUGIN%.*}
+            #Installingg all previous added plugins.
+            echoColor $COLOR_YELLOW "Reinstalling the $PLUGIN_FOR_INSTALL plugin..."
+            if [[ $PLUGIN_FOR_INSTALL == *file* ]] ; then
+                FILE_PLUGIN_INSTALLED=true
+            fi
+            cordova plugin remove $PLUGIN_FOR_INSTALL
+            cordova plugin add $PLUGIN_FOR_INSTALL
+        fi
+    done
+
+    #If file plugin wasn't previously installed then do it.
+    if [ $FILE_PLUGIN_INSTALLED == false ] ; then
+        echoColor $COLOR_YELLOW "Installing the org.apache.cordova.file plugin..."
+        cordova plugin add org.apache.cordova.file
+    fi
+}
+
+function parseHtml()
+{
+    #Injecting GoodDynamics.js file to the index.html page.
+    WWW_PATH="$PROJECT_PATH/assets/www"
+    cp "$ORIGINAL_PATH/Files/assets/www/GoodDynamics.js" "$WWW_PATH/"
+
+    sed -i -e 's/<script type="text\/javascript" src="cordova.js"><\/script>/<script type="text\/javascript" src="cordova.js"><\/script>\
+          <script type="text\/javascript" src="GoodDynamics.js"><\/script>/g' "$WWW_PATH/index.html"
+
+    sed -i -e 's/<script type="text\/javascript" charset="utf-8" src="cordova.js"><\/script>/<script type="text\/javascript" charset="utf-8" src="cordova.js"><\/script>\
+          <script type="text\/javascript" src="GoodDynamics.js"><\/script>/g' "$WWW_PATH/index.html"
+
+    rm -rf "$WWW_PATH/index.html-e"
+}
+
 parseOptions "$@"
 changeRootFiles
 changeSourcesFolder
 changeAssetsFolder
 addDependencies
+parseXml
+parseHtml
 
 echoColor $COLOR_GREEN "Successfully updated app."
