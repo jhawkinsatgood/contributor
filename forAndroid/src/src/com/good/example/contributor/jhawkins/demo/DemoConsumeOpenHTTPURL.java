@@ -25,47 +25,19 @@ import com.good.example.contributor.jhawkins.appkinetics.specific.RequestOpenHTT
 import com.good.example.contributor.jhawkins.demoframework.Component;
 
 public class DemoConsumeOpenHTTPURL extends Component {
-   private RequestOpenHTTPURL request; 
+   private RequestOpenHTTPURL request = null;
     
     public DemoConsumeOpenHTTPURL() {
         super();
-        request = new RequestOpenHTTPURL();
-        demoLabel = "Open HTTP URL";
-        demoIsActive = true;
-        demoNeedsPick = true;
-        // demoNeedsPick is set to false to get around the problem that Good 
-        // Access is not properly registered as a service provider.
-        // demoNeedsPick false means that demoExecute() gets invoked instead of
-        // demoGetPickList() and demoPickAndExecute().
-        // demoExecute() sets the provider to the native identifier of Good 
-        // Access by hard-coding.
+        demoExecuteLabel = "Open HTTP URL";
     }
 
-    // This method is invoked when demoNeedsPick is false, see above note.
-    @Override
-    public void demoExecute()
+    public String[] demoExecuteOrPickList()
     {
-        request.setURL("http://helpdesk")
-        .setApplication("com.good.gdgma.IccReceivingActivity").sendOrMessage();
-        // The above returns a message if there is an error in the send. The
-        // message is also inserted into the Request object, which is dumped
-        // below, so there is no need to log it additionally.
-        if (userInterface != null)
-            userInterface.demoLog("Sent request with hard-coded provider:" + 
-                    request.toString(2) + "\n");
-        return;
-    }
-    
-    // Following method isn't invoked when demoNeedsPick is false, see above
-    // note.
-    @Override
-    public String[] demoGetPickList()
-    {
+        if (request == null) { request = new RequestOpenHTTPURL(); }
         return request.queryProviders().getProviderNames();
     }
     
-    // Following method isn't invoked when demoNeedsPick is false, see above
-    // note.
     @Override
     public void demoPickAndExecute(int pickListIndex)
     {

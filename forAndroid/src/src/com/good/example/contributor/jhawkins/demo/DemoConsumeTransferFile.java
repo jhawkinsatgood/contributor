@@ -30,16 +30,11 @@ public class DemoConsumeTransferFile extends Component {
     
     public DemoConsumeTransferFile() {
         super();
-        demoLabel = "Transfer File";
-        demoIsActive = true;
-        demoNeedsPick = true;
+        demoExecuteLabel = "Transfer File";
     }
 
     @Override
-    public void demoExecute() { return; }
-    
-    @Override
-    public String[] demoGetPickList()
+    public String[] demoExecuteOrPickList()
     {
         if (request == null) request = new RequestTransferFile();
         return request.queryProviders().getProviderNames();

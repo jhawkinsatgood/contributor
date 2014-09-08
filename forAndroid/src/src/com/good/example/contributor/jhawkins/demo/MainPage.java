@@ -22,10 +22,12 @@
 package com.good.example.contributor.jhawkins.demo;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.text.TextUtils;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.good.example.contributor.jhawkins.demoframework.Component;
@@ -38,6 +40,7 @@ public class MainPage implements UserInterface {
     public static MainPage getInstance() {
         if (null == _instance) {
             _instance = new MainPage();
+            _instance.pageHTMLSemaphore = new Semaphore(1);
         }
         return _instance;
     }
@@ -57,9 +60,14 @@ public class MainPage implements UserInterface {
     private Component save = null;
     
     private ArrayList<Component> demos = null;
-    
+
+    // HTML in the page, access to which is controlled by a semaphore.
+    // These are private but still accessible to inner classes of this class.
+    private String pageHTML = null;
+    private Semaphore pageHTMLSemaphore = null;
+
     // Constant values
-    private final String jsObjectName = "mainPage";
+    private final String jsInterfaceName = "mainPage";
 
     public void demoLog( String newResults )
     {
@@ -96,16 +104,9 @@ public class MainPage implements UserInterface {
         return this;
     }
     
-    @SuppressLint("SetJavaScriptEnabled")
     public MainPage setWebView(WebView webView)
     {
-    	if (this.webView != webView) {
-    		this.webView = webView;
-    		if (this.webView != null) {
-    			this.webView.addJavascriptInterface( new JsObject(this), jsObjectName );
-    			this.webView.getSettings().setJavaScriptEnabled(true);
-    		}
-    	}
+    	this.webView = webView;
 		reloadHTML();
         return this;
     }
@@ -131,6 +132,9 @@ public class MainPage implements UserInterface {
         return this;
     }
 
+    public String getInformation() {
+    	return this.information;
+    }
     public MainPage setInformation(String information) {
         this.information = information;
         reloadHTML();
@@ -140,8 +144,7 @@ public class MainPage implements UserInterface {
     public MainPage load()
     {
         if (demos != null && !hasLoaded) for(Component demo: demos) {
-            // If this is a passive demo, start it now
-            if (!demo.getDemoIsActive()) demo.demoExecute();
+        	demo.demoLoad();
         }
         hasLoaded = true;
         reloadHTML();
@@ -168,24 +171,28 @@ public class MainPage implements UserInterface {
         else if (command.equals("execute")) {
             int parameter_int = Integer.valueOf(parameter);
             Component demoi = demos.get(parameter_int);
-            if (demoi.getDemoNeedsPick()) {
-                pickList = demoi.demoGetPickList();
-                if (pickList == null || pickList.length < 1) {
-                    demoLog("No providers.");
-                }
-                else if (pickList.length == 1) {
-                    pickList = null;
-                    demoi.demoPickAndExecute(0);
-                    reloadHTML();
-                }
-                else {
-                    pickFor = parameter_int;
-                    demoLog("Providers: " + pickList.length);
-                }
+            pickList = demoi.demoExecuteOrPickList();
+            if (pickList == null) {
+                // Demo returned nil to indicate no need for a pick.
+                reloadHTML();
+            }
+            else if (pickList.length < 1) {
+            	// Empty pick list.
+            	pickList = null;
+            	demoLog("No providers.");
+            	// demoLog triggers reloadHTML.
+            }
+            else if (pickList.length == 1) {
+            	// One item, pick it automatically.
+            	pickList = null;
+            	demoi.demoPickAndExecute(0);
+            	reloadHTML();
             }
             else {
-                demoi.demoExecute();
-                reloadHTML();
+            	// Actual pick list.
+            	pickFor = parameter_int;
+            	demoLog("Providers: " + pickList.length);
+            	// demoLog triggers reloadHTML.
             }
         }
         else if (command.equals("save")) {
@@ -219,25 +226,62 @@ public class MainPage implements UserInterface {
             demoi.demoPickAndExecute(Integer.valueOf(parameter));
             reloadHTML();
         }
+        else if (command.equals("switch")) {
+            int parameter_int = Integer.valueOf(parameter);
+            Component demoi = demos.get(parameter_int);
+            demoi.demoSwitch();
+            reloadHTML();
+        }
         else {
-            demoLog("handleCommand(" + command + "," + parameter + ")\n");
+            demoLog("handleCommand(" + command + ",");
+            if (parameter == null) {
+            	demoLog("null");
+            }
+            else {
+            	demoLog( "\"" + parameter + "\"" );
+            }
+			demoLog( ")\n" );
         }
         return "handleCommand(" + command + ")";
+    }
+    
+    // HandleCommand class enables the JS Interface to start a new thread in
+    // which to process commands from the user interface.
+    // This means that the JavaBridge thread terminates quicker.
+    private class HandleCommand implements Runnable {
+    	private String command = null;
+    	private String parameter = null;
+    	private MainPage mainPage = null;
+
+    	public HandleCommand(
+    			String command, String parameter, MainPage mainPage) {
+    		this.command = command;
+    		this.parameter = parameter;
+    		this.mainPage = mainPage;
+    	}
+    	
+    	@Override
+    	public void run() { 
+    		mainPage.handleCommand(this.command, this.parameter);
+    	}
     }
 
     // JSObject class
     // This is embedded in the web page.
-    class JsObject {
+    class MainPageJSInterface {
         private MainPage mainPage = null;
 
         // Constructor
-        public JsObject(MainPage myPage) {
+        public MainPageJSInterface(MainPage myPage) {
             mainPage = myPage;
         }
 
         // Interface method called from the JS layer.
-        public String command(String command, String parameter) {
-            return mainPage.handleCommand(command, parameter);
+        @JavascriptInterface
+        public void command(String command, String parameter) {
+        	// Spawn a thread to process the command.
+        	new Thread(new HandleCommand(
+        			command, parameter, this.mainPage)).start();
         }
     }
     
@@ -259,7 +303,7 @@ public class MainPage implements UserInterface {
     }
 
     private String _commandHTML( String command, String label, String value ) {
-        return "<span class=\"command\" onclick=\"" + jsObjectName + 
+        return "<span class=\"command\" onclick=\"" + jsInterfaceName + 
                 ".command('" + command + "'," + value +
                 ");\">" + label + "</span>";
     }
@@ -274,21 +318,33 @@ public class MainPage implements UserInterface {
     private String commandHTML( String command, String label) {
         return _commandHTML(command, label, "null");
     }
-
+    
     // Class for scheduling the WebView load on the UI thread.
+    @SuppressLint("SetJavaScriptEnabled")
     private class RunReloadHTML implements Runnable {
-    	String html = null;
-    	WebView webView = null;
+    	MainPage mainPage = null;
     	
-    	public RunReloadHTML(String html, WebView webView) {
-    		this.html = html;
-    		this.webView = webView;
+    	public RunReloadHTML(MainPage mainPage) {
+    		this.mainPage = mainPage;
     	}
 
 		@Override
 		public void run() {
-	        this.webView.loadDataWithBaseURL( "mainpage.html", this.html,
-            "text/html", null, "mainpage.html");
+			try {
+				this.mainPage.pageHTMLSemaphore.acquire();
+			} catch (InterruptedException e) {
+				// Somehow failed to lock the pageHTML for reading. The process 
+				// is probably being killed so don't try to do anything.
+				return;
+			}
+			// Enable JS, load the page, then insert the JS interface.
+			this.mainPage.webView.getSettings().setJavaScriptEnabled(true);
+			this.mainPage.webView.loadDataWithBaseURL(
+					"mainpage.html", this.mainPage.pageHTML,
+					"text/html", null, "mainpage.html");
+			this.mainPage.webView.addJavascriptInterface(
+					new MainPageJSInterface(this.mainPage), jsInterfaceName );
+			this.mainPage.pageHTMLSemaphore.release();
 		}
     }
 
@@ -296,7 +352,15 @@ public class MainPage implements UserInterface {
     {
         if (webView == null || activity == null || !hasLoaded) return;
         
-        StringBuilder pageHTML = new StringBuilder( "<html><head>" +
+        try {
+			pageHTMLSemaphore.acquire();
+		} catch (InterruptedException e) {
+			// Somehow failed to lock the pageHTML for writing. The process is 
+			// probably being killed so don't try to do anything.
+			return;
+		}
+        
+        StringBuilder newPageHTML = new StringBuilder( "<html><head>" +
                 "<style>" +
                 "  body {" +
                 "    font-family: sans-serif; " +
@@ -334,34 +398,52 @@ public class MainPage implements UserInterface {
                 "  }" +
                 "</style>" +
                 "<script type=\"text/javascript\" >" +
-                "var " + jsObjectName + ";" +
+                "function createNode(tag, text) {" +
+                "    var elem = document.createElement(tag);" +
+                "    if ( text != null ) {" +
+                "       var etxt = document.createTextNode(text);" +
+                "       elem.appendChild(etxt);" +
+                "    }" +
+                "    return elem;" +
+                "}" +
+                "" +
+                "function appendNode(tag, text, parent) {" +
+                "   return parent.appendChild( createNode(tag, text) );" +
+                "}" +
+                "" +
+                "function display(arg) {" +
+                "    appendNode('div', 'display(' + JSON.stringify(arg) + ')', " + 
+                "        document.getElementById('h1'));" +
+                "}" +
+                "" +
+                "var " + jsInterfaceName + ";" +
                 "</script>" +
                 "</head><body>" +
-                "<h1>" + title + "</h1>");
+                "<h1 id=\"h1\">" + title + "</h1>");
         if (information != null) {
-            pageHTML.append(
-                "<div class=\"information\">" + information + "</div>");
+            newPageHTML.append(
+            		"<div class=\"information\">" + information + "</div>" );
         }
         if (results != null) {
-            pageHTML.append(
+            newPageHTML.append(
                     "<div class=\"holder\"><pre>" + 
                     HTMLreplace(results, true) + "</pre><div>" + 
                     commandHTML("CLEAR", "&lt; Clear") + "</div></div>");
         }
         
         if (pickList != null) {
-            pageHTML.append("<div class=\"picker\">"); 
+            newPageHTML.append("<div class=\"picker\">"); 
             for(int i=0; i<pickList.length; i++) {
-                pageHTML.append("<div>" + pickList[i] + " ");
-                pageHTML.append(commandHTML( "pick", "Go &gt;", i));
-                pageHTML.append("</div>"); 
+                newPageHTML.append("<div>" + pickList[i] + " ");
+                newPageHTML.append(commandHTML( "pick", "Go &gt;", i));
+                newPageHTML.append("</div>"); 
             }
-            pageHTML.append("</div>"); 
+            newPageHTML.append("</div>"); 
         }
 
         if (editData != null) {
             String ctrlname = "savearea";
-            pageHTML.append(
+            newPageHTML.append(
                     "\n<div class=\"holder\"><textarea name=\"" + 
                             ctrlname + "\" id=\"" + ctrlname + "\">" + 
                     HTMLreplace(editData, false) + "</textarea></div><div>" + 
@@ -371,17 +453,33 @@ public class MainPage implements UserInterface {
         
         for (int i=0; i<demos.size(); i++) {
             Component demoi = demos.get(i);
-            if (pickFor != i && demoi.getDemoIsActive()) {
-                pageHTML.append(
-                    "<div class=\"holder\">" + 
-                    commandHTML("execute", demoi.getDemoLabel() + " &gt;", i) + 
-                    "</div>");
+            String executeLabel = demoi.getExecuteLabel();
+            String switchLabel = demoi.demoGetSwitchLabel();
+            if (pickFor != i && (executeLabel != null || switchLabel != null)) {
+                newPageHTML.append("<div class=\"holder\">");
+                if (executeLabel != null) {
+                	newPageHTML.append(commandHTML(
+                			"execute", executeLabel + " &gt;", i));
+                }
+                if (switchLabel != null) {
+                	newPageHTML.append(commandHTML("switch", switchLabel, i));
+                }
+                newPageHTML.append("</div>");
             }
         }
 
-        pageHTML.append("</body></html>");
+        newPageHTML.append("</body></html>");
 
-        // Run the loadData on the UI thread.
-        this.activity.runOnUiThread( new RunReloadHTML(pageHTML.toString(), this.webView) );
+        pageHTML = newPageHTML.toString();
+
+        // Have to release the pageHTML before scheduling the UI update.
+        // It's possible for the UI thread to execute the update immediately,
+        // which leads to a deadlock if the pageHTML is still acquired here.
+        pageHTMLSemaphore.release();
+
+        // Run the loadData on the UI thread. This will acquire and release the
+        // pageHTML too.
+        this.activity.runOnUiThread( new RunReloadHTML(this) );
     }
+    
 }

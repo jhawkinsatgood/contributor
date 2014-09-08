@@ -21,105 +21,64 @@
 
 package com.good.example.contributor.jhawkins.appkineticsworkflow;
 
-import java.util.Map;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.WebView;
-
 import android.app.Activity;
+
+import com.good.gd.GDAndroid;
+import com.good.gd.GDUIColorTheme;
 
 import com.good.example.contributor.jhawkins.demo.DemoConsumeOpenHTTPURL;
 import com.good.example.contributor.jhawkins.demo.DemoConsumeSendEmail;
 import com.good.example.contributor.jhawkins.demo.DemoConsumeTransferFile;
 import com.good.example.contributor.jhawkins.demo.DemoProvideTransferFile;
-import com.good.example.contributor.jhawkins.demo.MainPage;
-import com.good.gd.GDAndroid;
-import com.good.gd.GDStateListener;
-import com.good.gd.GDUIColorTheme;
-
+import com.good.example.contributor.jhawkins.demo.MainPageForGoodDynamics;
 
 /** Entry point activity which will start authorization with Good Dynamics
  * and once done launch the application UI.
- * 
- * Some markdown
- * -------------
  */
-public class MainActivity extends Activity implements GDStateListener {
+public class MainActivity extends Activity {
 
-	private static final String TAG = MainActivity.class.getSimpleName();
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_main);
         WebView webView = (WebView) findViewById(R.id.webView);
-        String page = "<html><head></head><body><p>MainActivity onCreate</p></body></html>";
-        webView.loadData(page, "text/html", null);
+
+    	MainPageForGoodDynamics mainPageForGD = MainPageForGoodDynamics.getInstance();
+
+    	if (!mainPageForGD.isSetUp()) {
+        	// Set up the UI, but don't load any demos yet, because GD demos won't load
+        	// before authorization is complete.
+            mainPageForGD.getMainPage().setBackgroundColour("DarkSeaGreen")
+            .setTitle( getResources().getString(R.string.app_name) )
+            .addDemoClasses(
+                    DemoConsumeSendEmail.class,
+                    DemoConsumeTransferFile.class,
+                    DemoConsumeOpenHTTPURL.class,
+                    DemoProvideTransferFile.class);
+        }
+
+        // The next line will attach a GD authorization listener that:
+        // -   Sets the WebView and Activity properties of MainPage.
+        // -   Causes the demos to be loaded, if they haven't loaded already.
+        // -   Sets the information line to display some GD-specific values.
+        // Those things only happen when the application authorizes.
+        mainPageForGD.setUp(webView, this);
 
         GDAndroid.getInstance().configureUI(
-                getResources().getDrawable(R.drawable.workflowlogo_xcf),
-                GDUIColorTheme.GDUIWhiteTheme);
-		GDAndroid.getInstance().activityInit(this);
+    			getResources().getDrawable(R.drawable.workflowlogo_xcf),
+    			GDUIColorTheme.GDUIWhiteTheme);
+
+        GDAndroid.getInstance().activityInit(this);
 	}
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-        MainPage.getInstance().setWebView(null).setActivity(null);
-	}
-
-	/** Activity specific implementation of GDStateListener. 
-	 * 
-	 * If a singleton event Listener is set by the application (as it is in this case) then setting 
-	 * Activity specific implementations of GDStateListener is optional   
-	 */
-	@Override
-	public void onAuthorized() {
-		//If Activity specific GDStateListener is set then its onAuthorized( ) method is called when 
-		//the activity is started if the App is already authorized 
-		Log.i(TAG, "onAuthorized()");
-
-		WebView webView = (WebView) findViewById(R.id.webView);
-        MainPage mainPage = MainPage.getInstance().setActivity(this).setWebView(webView);
-        if (!mainPage.loaded()) {
-            mainPage.setBackgroundColour("DarkSeaGreen")
-            .setTitle( getResources().getString(R.string.app_name) )
-            .setInformation(
-                    GDAndroid.getVersion() + " " + 
-                    GDAndroid.getInstance().getApplicationId())
-            .addDemoClasses(
-                    DemoConsumeSendEmail.class,
-                    DemoConsumeTransferFile.class,
-                    DemoConsumeOpenHTTPURL.class,
-                    DemoProvideTransferFile.class)
-            .load();
-        }
-	}
-
-	@Override
-	public void onLocked() {
-		Log.i(TAG, "onLocked()");
-	}
-
-	@Override
-	public void onWiped() {
-		Log.i(TAG, "onWiped()");
-	}
-
-	@Override
-	public void onUpdateConfig(Map<String, Object> settings) {
-		Log.i(TAG, "onUpdateConfig()");
-	}
-
-	@Override
-	public void onUpdatePolicy(Map<String, Object> policyValues) {
-		Log.i(TAG, "onUpdatePolicy()");
-	}
-
-	@Override
-	public void onUpdateServices() {
-		Log.i(TAG, "onUpdateServices()");
+		// If this Activity instance gets destroyed, clear the references to it
+		// so that they don't get held from garbage collection.
+		MainPageForGoodDynamics.getInstance().clear();
 	}
 }

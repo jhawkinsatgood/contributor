@@ -30,27 +30,30 @@
 
 @implementation DemoProvideTransferFile
 
-@synthesize provider;
-
-@synthesize demoLabel, demoIsActive, demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 -(instancetype)init
 {
     self = [super init];
-    provider = [gdProviderTransferFile new];
-    demoLabel = @"Provide Transfer File";
-    demoIsActive = @NO;
-    demoNeedsPick = @NO;
+    demoExecuteLabel = nil;
     return self;
 }
 
--(void)demoExecute
+-(NSString *)demoExecuteOrPickList
+{
+    return nil;
+}
+
+-(void)demoLoad
 {
     if (!DEMOUI) {
-        assert("DemoProvideTransferFile execute called without user "
-               "interface. Call demoSetApplication before demoExecute.");
+        assert("DemoProvideTransferFile set up attempted without user "
+               "interface. Call demoSetUserInterface before demoSetUp.");
     }
-    [provider addListener:^(gdRequest *request) {
+    if (self.provider == nil) {
+        self.provider = [gdProviderTransferFile new];
+    }
+    [self.provider addListener:^(gdRequest *request) {
         NSString *filename = [request getAttachment];
 
         [DEMOUI demoLogFormat:@"%@ received file \"%@\"...\n",
@@ -67,14 +70,7 @@
         return request;
     }];
 
-    [DEMOUI demoLogFormat:@"Ready for: %@\n", [provider getServiceID]];
+    [DEMOUI demoLogFormat:@"Ready for: %@\n", [self.provider getServiceID]];
 }
-
-// See .h file for documentation.
-//- (void) setReceiver
-//{
-//    [provider addListener:<#^gdRequest *(gdRequest *)listener#>]
-//    [self setReceiver:^(NSString *message){ NSLog(@"%@", message); }];
-//}
 
 @end

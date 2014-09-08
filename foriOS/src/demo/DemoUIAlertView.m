@@ -23,18 +23,16 @@
 
 @implementation DemoUIAlertView
 
-@synthesize demoLabel, demoIsActive, demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 -(instancetype)init
 {
     self = [super init];
-    demoLabel = @"Show an Alert";
-    demoIsActive = @YES;
-    demoNeedsPick = @NO;
+    demoExecuteLabel = @"Show an Alert";
     return self;
 }
 
--(void)demoExecute
+-(NSArray *)demoExecuteOrPickList
 {
     [[[UIAlertView alloc] initWithTitle:@"Title"
                                 message:@"Message"
@@ -42,6 +40,7 @@
                       cancelButtonTitle:@"Cancel"
                       otherButtonTitles: nil]
      show];
+    return nil;
 }
 
 @end

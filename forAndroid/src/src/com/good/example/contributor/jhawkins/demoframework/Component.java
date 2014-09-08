@@ -24,23 +24,22 @@ package com.good.example.contributor.jhawkins.demoframework;
 public abstract class Component {
     protected UserInterface userInterface = null;
     
-    protected String demoLabel = "no label set";
-    protected Boolean demoIsActive = false;
-    protected Boolean demoNeedsPick = false;
+    protected String demoExecuteLabel = "no label set";
 
     public Component setUserInterface(UserInterface userInterface) {
         this.userInterface = userInterface;
         return this;
     }
 
-    public String getDemoLabel() { return demoLabel; }
-    public Boolean getDemoIsActive() { return demoIsActive; }
-    public Boolean getDemoNeedsPick() { return demoNeedsPick; }
+    public String getExecuteLabel() { return demoExecuteLabel; }
 
-    public abstract void demoExecute();
+    public void demoLoad() { return; }
+    public abstract String[] demoExecuteOrPickList();
     
-    public String[] demoGetPickList() { return null; }
     public void demoPickAndExecute(int pickListIndex) { return; }
     
     public Boolean demoSave(String content) { return true; }
+    
+    public String demoGetSwitchLabel() { return null; }
+    public void demoSwitch() { return; }
 }

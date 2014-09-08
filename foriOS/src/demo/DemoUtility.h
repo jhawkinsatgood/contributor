@@ -22,11 +22,16 @@
 #import <Foundation/Foundation.h>
 
 @interface DemoUtility : NSObject
+
 +(NSString *)simpleDate;
+
 +(NSString *)createFileOrError:(NSString *)filename content:(NSString *)content;
 +(NSString *)createFileOrError:(NSString *)filename;
 +(NSString *)createFilesOrError:(NSArray *)filenames;
 +(NSString *)createDirectoryOrError:(NSString *)path;
 +(NSString *)statFile:(NSString *)filepath;
 +(NSString *)byteDump:(NSString *)filepath;
+
++(NSArray *)dictionariesFromGDAppServers:(NSArray *)appServers;
+
 @end

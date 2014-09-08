@@ -33,14 +33,11 @@ import com.good.gd.file.File;
  * This class illustrates use of the ProvideTransferFile class.
  */
 public class DemoProvideTransferFile extends Component {
-    private ProviderTransferFile provider;
+    private ProviderTransferFile provider = null;
 
     public DemoProvideTransferFile() {
         super();
-        provider = new ProviderTransferFile();
-        demoLabel = "Provide Transfer File";
-        demoIsActive = false;
-        demoNeedsPick = false;
+        demoExecuteLabel = null;
     }
     
     /** Illustrative service provider implementation.
@@ -76,13 +73,15 @@ public class DemoProvideTransferFile extends Component {
      * which logs a stat of the received file and the initial bytes.
      */
     @Override
-    public void demoExecute() {
+    public void demoLoad() {
         if (userInterface == null) {
             throw new Error(
-                    "DemoProvideTransferFile execute called without user " +
-                    "interface. Call demoSetApplication before demoExecute.");
+                    this.getClass().getSimpleName() + " load attempted " +
+            		"without user interface. Call demoSetUserInterface before " +
+            		"demoLoad.");
         }
 
+        provider = new ProviderTransferFile();
         provider.addListener(
                 // Instantiate an anonymous inner class that calls out to the
                 // onReceiveMessage in the outer class.
@@ -94,5 +93,10 @@ public class DemoProvideTransferFile extends Component {
                 });
         userInterface.demoLog("Ready for: " + provider.getServiceID() + "\n");
     }
+
+	@Override
+	public String[] demoExecuteOrPickList() {
+		return null;
+	}
 
 }

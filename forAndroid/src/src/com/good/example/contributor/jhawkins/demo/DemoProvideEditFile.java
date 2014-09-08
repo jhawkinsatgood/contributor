@@ -44,11 +44,13 @@ public class DemoProvideEditFile extends Component {
 
     public DemoProvideEditFile() {
         super();
-        provider = new ProviderEditFile();
-        demoLabel = "Provide Edit File";
-        demoIsActive = false;
-        demoNeedsPick = false;
+        demoExecuteLabel = null;
     }
+
+    @Override
+	public String[] demoExecuteOrPickList() {
+		return null;
+	}
 
     /** Illustrative service provider.
      * Call this method to set an illustrative implementation of the service,
@@ -59,14 +61,16 @@ public class DemoProvideEditFile extends Component {
      *                 every time a service request is received. It will be passed a
      *                 message to log on each invocation.
      */
-    public void demoExecute()
+    public void demoLoad()
     {
         if (userInterface == null) {
             throw new Error(
-                    "DemoProvideEditFile execute called without user " +
-                    "interface. Call demoSetApplication before demoExecute.");
+                    this.getClass().getSimpleName() + " load attempted " +
+            		"without user interface. Call demoSetUserInterface before " +
+            		"demoLoad.");
         }
 
+        provider = new ProviderEditFile();
         provider.addListener(
                 // Instantiate an anonymous inner class that calls out to the
                 // onReceiveMessage in the outer class.

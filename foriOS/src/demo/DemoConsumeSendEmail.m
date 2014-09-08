@@ -29,18 +29,16 @@
 
 @implementation DemoConsumeSendEmail
 
-@synthesize demoLabel, demoIsActive, demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 -(instancetype)init
 {
     self = [super init];
-    demoLabel = @"Send Email";
-    demoIsActive = @YES;
-    demoNeedsPick = @NO;
+    demoExecuteLabel = @"Send Email";
     return self;
 }
 
--(void)demoExecute
+-(NSString *)demoExecuteOrPickList
 {
     // Create illustrative files for attachment.
     NSArray *attachments = @[[NSStringFromClass([self class])
@@ -77,6 +75,8 @@
     // message is also inserted into the Request object, which is dumped
     // below, so there is no need to log it additionally.
     if (DEMOUI) [DEMOUI demoLogFormat:@"Sent request:%@\n", request];
+    
+    return nil;
 }
 
 @end

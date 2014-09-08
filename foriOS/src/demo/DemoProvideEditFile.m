@@ -34,9 +34,7 @@
 
 @implementation DemoProvideEditFile
 
-@synthesize provider, request;
-
-@synthesize demoLabel, demoIsActive, demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 id<DemoUserInterface> userInterface = nil;
 DemoProvideEditFile *blockSelf = nil;
@@ -44,24 +42,27 @@ DemoProvideEditFile *blockSelf = nil;
 -(instancetype)init
 {
     self = [super init];
-    provider = [gdProviderEditFile new];
-    demoLabel = @"Provide Edit File";
-    demoIsActive = @NO;
-    demoNeedsPick = @NO;
+    demoExecuteLabel = nil;
     return self;
 }
 
--(void)demoExecute
+-(void)demoLoad
 {
     if (!DEMOUI) {
-        assert("DemoProvideEditFile demoListener called without user "
-               "interface. Call demoSetApplication before demoExecute.");
+        assert("DemoProvideEditFile set up attempted without user "
+               "interface. Call demoSetUserInterface before demoSetUp.");
     }
 
     userInterface = DEMOUI;
     blockSelf = self;
-    [provider addListener:demoListener];
-    [userInterface demoLogFormat:@"Ready for: %@\n", [provider getServiceID]];
+    self.provider = [gdProviderEditFile new];
+    [self.provider addListener:demoListener];
+    [userInterface demoLogFormat:@"Ready for: %@\n", [self.provider getServiceID]];
+}
+
+-(NSArray *)demoExecuteOrPickList
+{
+    return nil;
 }
 
 -(BOOL)demoSave:(NSString *)content
@@ -79,7 +80,7 @@ DemoProvideEditFile *blockSelf = nil;
         // ToDo: Use a proper temporary filename generator.
         filename = [NSString stringWithFormat:@"/%@-%@%@%@",
                     NSStringFromClass([self class]),
-                    @"request", [request getRequestID], @"tempfile"];
+                    @"request", [self.request getRequestID], @"tempfile"];
         NSString *error = [DemoUtility createFileOrError:filename
                                                  content:content];
         if (error) {
@@ -95,14 +96,14 @@ DemoProvideEditFile *blockSelf = nil;
     // Otherwise the method will be saveEdit and the file created above is
     // added as an attachment.
     gdRequestSaveEditedFile *requestSave = [gdRequestSaveEditedFile new];
-    [requestSave setApplication:[request getApplication]];
+    [requestSave setApplication:[self.request getApplication]];
     if (filename == nil) {
         [requestSave setMethodReleaseEdit];
     }
     else {
         [[requestSave setMethodSaveEdit] addAttachments:@[filename]];
     }
-    [[requestSave setIdentificationData:[request getIdentificationData]]
+    [[requestSave setIdentificationData:[self.request getIdentificationData]]
      sendOrMessage:nil];
     // The above returns a message if there is an error in the send. The
     // message is also inserted into the Request object, which is dumped

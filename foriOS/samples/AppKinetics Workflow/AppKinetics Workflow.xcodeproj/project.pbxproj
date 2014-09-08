@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		81AB42F919B4860100BC9E53 /* MainPageForGoodDynamics.m in Sources */ = {isa = PBXBuildFile; fileRef = 81AB42F819B4860100BC9E53 /* MainPageForGoodDynamics.m */; };
+		81AB430019B487B100BC9E53 /* gdRuntimeDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 81AB42FE19B487B100BC9E53 /* gdRuntimeDispatcher.m */; };
 		81CB20F119713E1900733EAE /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20EC19713E1900733EAE /* libstdc++.dylib */; };
 		81CB20F219713E1900733EAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20ED19713E1900733EAE /* libz.dylib */; };
 		81CB20F319713E1900733EAE /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20EE19713E1900733EAE /* MessageUI.framework */; };
@@ -50,6 +52,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		81AB42F719B4860100BC9E53 /* MainPageForGoodDynamics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainPageForGoodDynamics.h; sourceTree = "<group>"; };
+		81AB42F819B4860100BC9E53 /* MainPageForGoodDynamics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainPageForGoodDynamics.m; sourceTree = "<group>"; };
+		81AB42FD19B487B100BC9E53 /* gdRuntimeDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdRuntimeDispatcher.h; sourceTree = "<group>"; };
+		81AB42FE19B487B100BC9E53 /* gdRuntimeDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gdRuntimeDispatcher.m; sourceTree = "<group>"; };
 		81CB20EC19713E1900733EAE /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		81CB20ED19713E1900733EAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		81CB20EE19713E1900733EAE /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -143,11 +149,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		81AB42FA19B487B100BC9E53 /* gdruntime */ = {
+			isa = PBXGroup;
+			children = (
+				81AB42FD19B487B100BC9E53 /* gdRuntimeDispatcher.h */,
+				81AB42FE19B487B100BC9E53 /* gdRuntimeDispatcher.m */,
+			);
+			path = gdruntime;
+			sourceTree = "<group>";
+		};
 		92C96BA81922096A0092DBE8 = {
 			isa = PBXGroup;
 			children = (
-				81CB20F619713FB800733EAE /* default.xcconfig */,
 				92C96C6A1922226B0092DBE8 /* readme.txt */,
+				81CB20F619713FB800733EAE /* default.xcconfig */,
 				92C96BCA1922096A0092DBE8 /* AppKinetics Workflow */,
 				92C96BB31922096A0092DBE8 /* Frameworks */,
 				92C96BB21922096A0092DBE8 /* Products */,
@@ -235,6 +250,7 @@
 		92C96C1D19220D8A0092DBE8 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				81AB42FA19B487B100BC9E53 /* gdruntime */,
 				92C96C1E19220D8A0092DBE8 /* appkinetics */,
 				92C96C3319220D8A0092DBE8 /* demo */,
 				92C96C4419220D8A0092DBE8 /* demoframework */,
@@ -283,18 +299,20 @@
 		92C96C3319220D8A0092DBE8 /* demo */ = {
 			isa = PBXGroup;
 			children = (
+				92591D0E1923A0280036AADA /* DemoConsumeOpenHTTPURL.h */,
+				92591D0F1923A0280036AADA /* DemoConsumeOpenHTTPURL.m */,
 				92C96C3619220D8A0092DBE8 /* DemoConsumeSendEmail.h */,
 				92C96C3719220D8A0092DBE8 /* DemoConsumeSendEmail.m */,
 				92C96C3819220D8A0092DBE8 /* DemoConsumeTransferFile.h */,
 				92C96C3919220D8A0092DBE8 /* DemoConsumeTransferFile.m */,
 				92C96C3C19220D8A0092DBE8 /* DemoProvideTransferFile.h */,
 				92C96C3D19220D8A0092DBE8 /* DemoProvideTransferFile.m */,
-				92591D0E1923A0280036AADA /* DemoConsumeOpenHTTPURL.h */,
-				92591D0F1923A0280036AADA /* DemoConsumeOpenHTTPURL.m */,
 				92C96C4019220D8A0092DBE8 /* DemoUtility.h */,
 				92C96C4119220D8A0092DBE8 /* DemoUtility.m */,
 				92C96C4219220D8A0092DBE8 /* MainPage.h */,
 				92C96C4319220D8A0092DBE8 /* MainPage.m */,
+				81AB42F719B4860100BC9E53 /* MainPageForGoodDynamics.h */,
+				81AB42F819B4860100BC9E53 /* MainPageForGoodDynamics.m */,
 			);
 			path = demo;
 			sourceTree = "<group>";
@@ -391,6 +409,7 @@
 				92591D101923A0280036AADA /* DemoConsumeOpenHTTPURL.m in Sources */,
 				92591D0D1923995C0036AADA /* gdRequestOpenHTTPURL.m in Sources */,
 				92C96C6419220D8A0092DBE8 /* DemoProvideTransferFile.m in Sources */,
+				81AB430019B487B100BC9E53 /* gdRuntimeDispatcher.m in Sources */,
 				92C96C6919220D8A0092DBE8 /* PathStore.m in Sources */,
 				92C96C6219220D8A0092DBE8 /* DemoConsumeTransferFile.m in Sources */,
 				92C96C5819220D8A0092DBE8 /* gdProvider.m in Sources */,
@@ -402,6 +421,7 @@
 				92C96C6719220D8A0092DBE8 /* MainPage.m in Sources */,
 				92C96C6119220D8A0092DBE8 /* DemoConsumeSendEmail.m in Sources */,
 				92C96C5F19220D8A0092DBE8 /* gdRequestTransferFile.m in Sources */,
+				81AB42F919B4860100BC9E53 /* MainPageForGoodDynamics.m in Sources */,
 				9228072B198A8D680033F4B0 /* MainPageViewController.m in Sources */,
 				92C96BD51922096A0092DBE8 /* AppDelegate.m in Sources */,
 				92C96C5919220D8A0092DBE8 /* gdRequest.m in Sources */,

@@ -38,10 +38,14 @@
     return self;
 }
 
--(NSArray *)demoGetPickList { return nil; }
+-(void)demoLoad { return; }
 
 -(void)demoPickAndExecute:(int)pickListIndex { return; }
 
 -(BOOL)demoSave:(NSString *)content { return true; }
+
+-(NSString *)demoGetSwitchLabel { return nil; }
+
+-(void)demoSwitch { return; }
 
 @end

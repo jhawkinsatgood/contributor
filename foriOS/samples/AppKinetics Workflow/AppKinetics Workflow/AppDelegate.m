@@ -20,32 +20,53 @@
  */
 
 #import "AppDelegate.h"
-#import "MainPageViewController.h"
+#import "MainPageForGoodDynamics.h"
 
-@interface AppDelegate()
-@end
+#import <GD/GDiOS.h>
+
+#import "DemoConsumeSendEmail.h"
+#import "DemoConsumeTransferFile.h"
+#import "DemoProvideTransferFile.h"
+#import "DemoConsumeOpenHTTPURL.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     GDiOS *gdRuntime = [GDiOS sharedInstance];
-
+    
+    MainPage *mainPage = [[MainPageForGoodDynamics sharedInstance] mainPage];
+    
+    // The mainBundle is used for a string that is passed to the user interface
+    // builder.
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    [mainPage setTitle:[infoDictionary objectForKey:@"CFBundleDisplayName"]];
+    [mainPage setBackgroundColour:@"DarkSeaGreen"];
+    [mainPage addDemoClasses:@[ [DemoConsumeSendEmail class],
+                                [DemoConsumeTransferFile class],
+                                [DemoConsumeOpenHTTPURL class],
+                                [DemoProvideTransferFile class] ]];
+    
 	self.window = [gdRuntime getWindow];
-	gdRuntime.delegate = self;
+    
     [gdRuntime configureUIWithLogo:@"workflowlogo_xcf.png"
                             bundle:nil
                              color:[UIColor colorWithWhite:0.0 alpha:1.0]];
-
-    // Use of an auto-synthesised backing variable for a readonly property.
-    _hasAuthorized = NO;
+    
+    // The next line will attach a GD authorization listener that:
+    // -   Gets a WebView setting from the ViewController and applies it to the
+    //     MainPage instance.
+    // -   Causes the demos to be loaded, if they haven't loaded already.
+    // -   Sets the information line to display some GD-specific values.
+    // Those things only happen when the application authorizes.
+    [[MainPageForGoodDynamics sharedInstance] setUp];
 	
 	// Show the Good Authentication UI.
 	[gdRuntime authorize];
 	
 	return YES;
 }
-			
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -54,7 +75,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
@@ -72,91 +93,4 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
-
-
-#pragma mark - Good Dynamics Delegate Methods
--(void)handleEvent:(GDAppEvent*)anEvent
-{
-	/* Called from _good when events occur, such as system startup. */
-	
-	switch (anEvent.type)
-	{
-		case GDAppEventAuthorized:
-		{
-			[self onauthorized:anEvent];
-			break;
-		}
-		case GDAppEventNotAuthorized:
-		{
-			[self onNotauthorized:anEvent];
-			break;
-		}
-		case GDAppEventRemoteSettingsUpdate:
-		{
-			//A change to application-related configuration or policy settings.
-			break;
-		}
-		case GDAppEventServicesUpdate:
-		{
-			//A change to services-related configuration.
-			break;
-		}
-		case GDAppEventPolicyUpdate:
-		{
-			//A change to one or more application-specific policy settings has been received.
-			break;
-		}
-	}
-}
-			
-
--(void)onNotauthorized:(GDAppEvent*)anEvent 
-{
-	/* Handle the Good Libraries not authorized event. */                            
-
-	switch (anEvent.code) {
-		case GDErrorActivationFailed:
-		case GDErrorProvisioningFailed:
-		case GDErrorPushConnectionTimeout:
-		case GDErrorSecurityError:
-		case GDErrorAppDenied:
-		case GDErrorBlocked:
-		case GDErrorWiped:
-		case GDErrorRemoteLockout: 
-		case GDErrorPasswordChangeRequired: {
-			// an condition has occured denying authorization, an application may wish to log these events
-			NSLog(@"onNotauthorized %@", anEvent.message);
-			break;
-		}
-		case GDErrorIdleLockout: {
-			// idle lockout is benign & informational
-			break;
-		}
-		default: 
-			NSAssert(false, @"Unhandled not authorized event");
-			break;
-	}
-}
-			
-
--(void)onauthorized:(GDAppEvent*)anEvent 
-{
-	/* Handle the Good Libraries authorized event. */                            
-
-	switch (anEvent.code) {
-		case GDErrorNone: {
-			if (!_hasAuthorized) {
-				_hasAuthorized = YES;
-				// launch application UI here
-                [(MainPageViewController *) self.window.rootViewController
-                 launchUI];
-			}
-			break;
-		}
-		default:
-			NSAssert(false, @"authorized startup with an error");
-			break;
-	}
-}
-
 @end

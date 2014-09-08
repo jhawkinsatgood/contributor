@@ -24,24 +24,21 @@
 
 @implementation DemoAPIShowPreferenceUI
 
-@synthesize demoLabel;
-@synthesize demoIsActive;
-@synthesize demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 -(instancetype)init
 {
     self = [super init];
-    demoLabel = @"Show Preferences";
-    demoIsActive = @YES;
-    demoNeedsPick = @NO;
+    demoExecuteLabel = @"Show Preferences";
     return self;
 }
 
--(void)demoExecute
+-(NSArray *)demoExecuteOrPickList
 {
     BOOL didShow = [[GDiOS sharedInstance] showPreferenceUI:nil];
     [DEMOUI demoLogFormat:@"showPreferenceUI %@\n",
      (didShow ? @"YES" : @"NO")];
+    return nil;
 }
 
 @end

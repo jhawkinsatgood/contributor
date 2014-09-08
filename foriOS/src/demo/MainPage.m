@@ -151,10 +151,7 @@
 {
     for (int i=0; i<self.demos.count; i++) {
         DemoComponent<DemoComponent> *demoi = self.demos[i];
-        // If this is a passive demo, start it now
-        if (![[demoi demoIsActive] boolValue]) {
-            [demoi demoExecute];
-        }
+        [demoi demoLoad];
     }
     self.hasLoaded = YES;
     [self reloadHTML];
@@ -177,26 +174,28 @@
         int parameter_int = [[[NSNumberFormatter new]
                               numberFromString:parameter] intValue];
         DemoComponent<DemoComponent> *demoi = self.demos[parameter_int];
-        if ([[demoi demoNeedsPick] boolValue]) {
-            self.pickList = [demoi demoGetPickList];
-            if ( (!self.pickList) || (self.pickList.count < 1) ) {
-                [self demoLogString:@"No providers."];
-            }
-            else if (self.pickList.count == 1) {
-                self.pickList = nil;
-                [demoi demoPickAndExecute:0];
-                [self reloadHTML];
-            }
-            else {
-                self.pickFor = parameter_int;
-                [self demoLogString:[NSString
-                                     stringWithFormat:@"Providers: %d",
-                                     self.pickList.count]];
-            }
+        self.pickList = [demoi demoExecuteOrPickList];
+        if (self.pickList == nil) {
+            // Demo returned nil to indicate no need for a pick.
+            [self reloadHTML];
+        }
+        else if ( self.pickList.count < 1 ) {
+            // Empty pick list.
+            self.pickList = nil;
+            [self demoLogString:@"No providers."];
+            // demoLogString triggers reloadHTML.
+        }
+        else if (self.pickList.count == 1) {
+            // One item, pick it automatically.
+            self.pickList = nil;
+            [demoi demoPickAndExecute:0];
+            [self reloadHTML];
         }
         else {
-            [demoi demoExecute];
-            [self reloadHTML];
+            // Actual pick list.
+            self.pickFor = parameter_int;
+            [self demoLogFormat:@"Providers: %d", self.pickList.count];
+            // demoLogFormat triggers reloadHTML.
         }
         return YES;
     }
@@ -233,6 +232,14 @@
         self.pickList = nil;
         self.pickFor = -1;
         [demoi demoPickAndExecute:pick_int];
+        [self reloadHTML];
+        return YES;
+    }
+    else if ([command isEqualToString:@"switch"]) {
+        int parameter_int = [[[NSNumberFormatter new]
+                              numberFromString:parameter] intValue];
+        DemoComponent *demoi = self.demos[parameter_int];
+        [demoi demoSwitch];
         [self reloadHTML];
         return YES;
     }
@@ -284,20 +291,27 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 #undef ENUM
 
     BOOL known = NO;
+    NSString *formText = nil;
     // Form submission is used to pass control back from the web page to here.
     // XHR would have been easier to process, but unfortunately XHR requests do
     // not seem to trigger this callback.
     if (UIWebViewNavigationTypeFormSubmitted == navigationType) {
+        formText = [MainPage getFormText:request];
         known = [self handleCommand:request.URL.lastPathComponent
-                      withParameter:[MainPage getFormText:request]];
+                      withParameter:formText];
     }
 
     if (!known) {
-        [self demoLogString:
-         [NSString
-          stringWithFormat:@"shouldStartLoadWithRequest %s\n"
-          "URL \"%@\", lastPathComponent \"%@\"\n",
-          navType, request.URL, request.URL.lastPathComponent]];
+        [self demoLogFormat:@"shouldStartLoadWithRequest %s\n"
+          "URL \"%@\", lastPathComponent \"%@\", formText ",
+         navType, request.URL, request.URL.lastPathComponent ];
+        if (formText == nil) {
+            [self demoLogString:@"None"];
+        }
+        else {
+            [self demoLogFormat:@"\"%@\"", formText];
+        }
+        [self demoLogString:@"\n"];
     }
 
     return NO;
@@ -457,12 +471,24 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     
     for (int i=0; i<self.demos.count; i++) {
         DemoComponent<DemoComponent> *demoi = self.demos[i];
-        if (i != self.pickFor && [[demoi demoIsActive] boolValue])
-            [pageHTML appendFormat:@"<div class=\"holder\"><div>%@</div></div>",
-             [MainPage commandHTML:@"execute"
-                             label:[[demoi demoLabel]
-                                    stringByAppendingString:@" &gt;"]
-                             value:i]];
+        NSString *executeLabel = [demoi demoExecuteLabel];
+        NSString *switchLabel = [demoi demoGetSwitchLabel];
+        if ( i != self.pickFor && (executeLabel != nil || switchLabel != nil) ) {
+            [pageHTML appendString:@"<div class=\"holder\"><div>"];
+            if (executeLabel != nil) {
+                [pageHTML appendString:
+                 [MainPage commandHTML:@"execute"
+                                 label:[executeLabel
+                                        stringByAppendingString:@" &gt;"]
+                                 value:i]];
+            }
+            if (switchLabel != nil) {
+                [pageHTML appendString:[MainPage commandHTML:@"switch"
+                                                       label:switchLabel
+                                                       value:i]];
+            }
+            [pageHTML appendString:@"</div></div>"];
+        }
     }
 
     [pageHTML appendString:@"</body></html>"];

@@ -28,45 +28,31 @@
 
 @implementation DemoConsumeOpenHTTPURL
 
-@synthesize demoLabel, demoIsActive, demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 -(instancetype)init
 {
     self = [super init];
-    _request = [gdRequestOpenHTTPURL new];
-    demoLabel = @"Open HTTP URL";
-    demoIsActive = @YES;
-    demoNeedsPick = @YES;
+    demoExecuteLabel = @"Open HTTP URL";
     return self;
 }
 
--(void)demoExecute //{ return; }
-{
-    // Override the application to the native ID for Good Access
-    // NSString *error =
-    [[[_request setApplication:@"com.good.gdgma"]
-                        setURL:@"http://helpdesk"]
-                       sendOrMessage:nil];
-    if (DEMOUI) [DEMOUI demoLogFormat:@"Sent open HTTP request to gdgma:%@\n",
-                 _request];
-    return;
-}
-
-// Real code to be uncommented when used with Good Access 1.1.0.0 which is
-// registered as a service provider.
-// At that time it will also be necessary to set demoNeedsPick YES
--(NSArray *)demoGetPickList {
+-(NSArray *)demoExecuteOrPickList {
+    if (self.request == nil) { self.request = [gdRequestOpenHTTPURL new]; }
     return [[self.request queryProviders] getProviderNames];
 }
 
 -(void)demoPickAndExecute:(int)pickListIndex
 {
     // Send the request.
-    NSString *error = [[[self.request selectProvider:pickListIndex]
-                        setURL:@"https://gmc.trygoodnow.com:8443"]
-                       sendOrMessage:nil];
-    if (DEMOUI) [DEMOUI demoLogFormat:@"Sent open HTTP request:%@\n",
-                 self.request];
+    [[[self.request selectProvider:pickListIndex]
+      setURL:@"https://helpdesk"]
+     sendOrMessage:nil];
+    // The above returns a message if there is an error in the send. The
+    // message is also inserted into the Request object, which is dumped
+    // below, so there is no need to log it additionally.
+    if (DEMOUI) [DEMOUI demoLogFormat:@"Sent request:%@\n", self.request];
+
     return;
 }
 

@@ -30,20 +30,16 @@
 
 @implementation DemoConsumeTransferFile
 
-@synthesize demoLabel, demoIsActive, demoNeedsPick;
+@synthesize demoExecuteLabel;
 
 -(instancetype)init
 {
     self = [super init];
-    demoLabel = @"Transfer File";
-    demoIsActive = @YES;
-    demoNeedsPick = @YES;
+    demoExecuteLabel = @"Transfer File";
     return self;
 }
 
--(void)demoExecute { return; }
-
--(NSArray *)demoGetPickList {
+-(NSArray *)demoExecuteOrPickList {
     if (!_request) _request = [gdRequestTransferFile new];
     return [[_request queryProviders] getProviderNames];
 }

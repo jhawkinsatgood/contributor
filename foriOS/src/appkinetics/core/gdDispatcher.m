@@ -36,9 +36,6 @@ typedef struct PROVIDER_LOOKUP {
 
 @implementation gdDispatcher
 
-@synthesize providers;
-@synthesize gdService;
-
 +(instancetype)sharedInstance
 {
     static gdDispatcher *dispatcher = nil;
@@ -53,18 +50,18 @@ typedef struct PROVIDER_LOOKUP {
 -(instancetype)init
 {
     self = [super init];
-    providers = [NSMutableArray new];
-    gdService = [GDService new];
-    gdService.delegate = self;
+    _providers = [NSMutableArray new];
+    _gdService = [GDService new];
+    _gdService.delegate = self;
     return self;
 }
 
 -(instancetype)register:(gdProvider *)provider
 {
-    [providers addObject:provider];
+    [self.providers addObject:provider];
     // After adding the instance to the map, ensure that this class is the
     // delegate.
-    gdService.delegate = self;
+    self.gdService.delegate = self;
     return self;
 }
 
@@ -78,8 +75,8 @@ typedef struct PROVIDER_LOOKUP {
     }
     ret->index = -1;
     BOOL errorcodeset = NO;
-    for (int i=0; i<providers.count; i++) {
-        gdProvider *provideri = (gdProvider *)providers[i];
+    for (int i=0; i<self.providers.count; i++) {
+        gdProvider *provideri = (gdProvider *)self.providers[i];
         
         // Find out what matches
         BOOL matchedServiceID = [[provideri getServiceID]
@@ -162,7 +159,8 @@ typedef struct PROVIDER_LOOKUP {
     }
     else {
         // Otherwise, invoke the receiver in the provider
-        [(gdProvider *)(providers[lookup->index]) onReceiveRequest:request];
+        [(gdProvider *)(self.providers[lookup->index])
+         onReceiveRequest:request];
     }
     
     free(lookup);

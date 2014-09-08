@@ -32,9 +32,7 @@ public class DemoConsumeSendEmail extends Component {
     
     public DemoConsumeSendEmail() {
         super();
-        demoLabel = "Send Email";
-        demoIsActive = true;
-        demoNeedsPick = false;
+        demoExecuteLabel = "Send Email";
     }
 
     /** Send an illustrative service request.
@@ -45,7 +43,7 @@ public class DemoConsumeSendEmail extends Component {
      *
      * \return String containing a transcript of the service request.
      */
-    public void demoExecute()
+    public String[] demoExecuteOrPickList()
     {
         // Create illustrative files for attachment.
         String attachments[] = {
@@ -87,5 +85,7 @@ public class DemoConsumeSendEmail extends Component {
         // below, so there is no need to log it additionally.
         if (userInterface != null)
             userInterface.demoLog("Sent request:" + request.toString(2) + "\n");
+        
+        return null;
     }
 }

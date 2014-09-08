@@ -26,9 +26,12 @@
 -(instancetype)demoSetUserInterface:(id<DemoUserInterface>)demoUserInterface;
 -(id<DemoUserInterface>)demoUserInterface;
 
--(NSArray *)demoGetPickList;
+-(void)demoLoad;
 -(void)demoPickAndExecute:(int)pickListIndex;
 -(BOOL)demoSave:(NSString *)content;
+
+-(NSString *)demoGetSwitchLabel;
+-(void)demoSwitch;
 @end
 
 #define DEMOUI [super demoUserInterface]

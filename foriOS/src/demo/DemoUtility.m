@@ -21,6 +21,7 @@
 
 #import "DemoUtility.h"
 #import <GD/GDFileSystem.h>
+#import <GD/GDAppServer.h>
 
 @interface DemoUtility()
 +(NSString *)basicContent;
@@ -158,6 +159,21 @@
     }
     return [NSString stringWithFormat:@"Failed to read file \"%@\". %@.\n",
             filepath, err];
+}
+
++(NSArray *)dictionariesFromGDAppServers:(NSArray *)appServers
+{
+    NSMutableArray *ret = [NSMutableArray arrayWithCapacity:appServers.count];
+    for (int i=0; i<appServers.count; i++) {
+        GDAppServer *appServeri = (GDAppServer *)(appServers[i]);
+        NSDictionary *dictionary =
+        [NSDictionary dictionaryWithObjectsAndKeys:
+         appServeri.server, @"server",
+         appServeri.port, @"port",
+         appServeri.priority, @"priority", nil];
+        ret[i] = dictionary;
+    }
+    return ret;
 }
 
 @end

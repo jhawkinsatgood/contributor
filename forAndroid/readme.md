@@ -9,12 +9,12 @@ the first time, the following steps can be followed.
     directory and from the `src/` directory.
 3.  Change the library reference of the GD Runtime in both of these projects to
     be your GD Runtime project. This is the project that you would have created
-    when you installed the GD SDK for Android. Note that the sample applications
-    require and already have a reference to the `src/` project, which is marked
-    as a library.
+    when you installed the GD SDK for Android. Note that the contributor
+    applications require and already have a reference to the `src/` project,
+    which is marked as a library.
 
-The samples for Android are now ready to use. You can run the AppKinetics
-Workflow sample application on an emulator or real device.
+The contributor applications for Android are now ready to use. You can run them
+on an emulator or real device.
 
 For general details about Good Dynamics contributor code see the readme file in
 the parent repository.

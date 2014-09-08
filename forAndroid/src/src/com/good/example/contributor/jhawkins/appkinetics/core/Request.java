@@ -328,12 +328,12 @@ public class Request implements GDServiceClientListener
         if (providers_object == null ||
             providers_object.getClass() != PathStore.class
         ) {
-            return null;
+            return new String[0];
         }
         
         PathStore providers = (PathStore)providers_object;
-        int providers_length = providers.length(); 
-        if (providers_length <= 0) return null;
+        int providers_length = providers.length();
+        // Length zero is not treated as a special case.
         String ret[] = new String[providers_length];
         for( int i=0; i<providers_length; i++) {
             ret[i] = providers.pathGetString(i, detail);

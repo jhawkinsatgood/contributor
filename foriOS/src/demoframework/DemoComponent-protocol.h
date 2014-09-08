@@ -20,9 +20,7 @@
  */
 
 @protocol DemoComponent <NSObject>
-@property (readonly)NSString *demoLabel;
-@property (readonly)NSNumber *demoIsActive;
-@property (readonly)NSNumber *demoNeedsPick;
--(void)demoExecute;
+@property (readonly)NSString *demoExecuteLabel;
+-(NSArray *)demoExecuteOrPickList;
 @end
 

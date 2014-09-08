@@ -303,12 +303,14 @@
     NSObject *providers_object =
     [store pathGet:@"Request", @"Provider", @"Query", nil];
     if (![providers_object isKindOfClass:[PathStore class]]) {
-        return nil;
+        // Return an empty array.
+        return @[];
     }
     
     PathStore *providers = (PathStore *)providers_object;
     int providers_length = [providers length];
-    if (providers_length <= 0) return nil;
+    // Next line returns an empty array.
+    if (providers_length <= 0) return @[];
     NSMutableArray *ret = [NSMutableArray arrayWithCapacity:providers_length];
     for (int i=0; i<providers_length; i++) {
         ret[i] = [providers pathGetString:
