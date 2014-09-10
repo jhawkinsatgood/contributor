@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>${PRODUCT_NAME} contributor application</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
@@ -37,7 +37,7 @@
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>GDApplicationID</key>
-	<string>com.goodinternal.example.contributor.jhawkins.enterprise</string>
+	<string>com.good.example.contributor.jhawkins.enterprise</string>
 	<key>GDApplicationVersion</key>
 	<string>1.0.0.0</string>
 	<key>GDConsoleLogger</key>

@@ -19,6 +19,6 @@
 
 <resources>
     <!-- Simple strings. -->
-    <string name="app_name">Enterprise</string>
+    <string name="app_name">Enterprise contributor application</string>
 </resources>
 
