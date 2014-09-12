@@ -55,7 +55,7 @@ following.
     Good Proxy (GP) server. One way to set this up is:
     1.  Run the script on its host as follows:
     
-            perl ./minpush.pl http404
+            perl ./minipush.pl http404
 
         This should product output like the following:
 
@@ -74,11 +74,11 @@ following.
         
         You might have to make it writable to users in order to edit it.
         
-        The format required is: <IP address> <machine name>
+        The format required is: `<IP address> <machine name>`
         
         The IP address in the above could be added as:
 
-            192.168.1.155 minpush.jhawkins.a.com
+            192.168.1.155 minipush.jhawkins.a.com
         
         Note that a fully qualified domain name (FQDN) has been used. This is
         necessary, although there is no need for the domain to be valid.
@@ -107,7 +107,7 @@ following.
         Even a connection that connot connect to the Internet might still be
         useable for connection from the application server.)
         
-    Then check that the minipush server can reach the GP, by running a comman
+    Then check that the minipush server can reach the GP, by running a command
     like:
     
         perl ./minipush.pl -a <server address> -p 17080 one
