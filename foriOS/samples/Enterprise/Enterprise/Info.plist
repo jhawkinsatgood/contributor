@@ -5,11 +5,11 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>${PRODUCT_NAME} contributor application</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.good.example.contributor.jhawkins.appkineticsworkflow</string>
+	<string>com.good.example.contributor.jhawkins.enterprise</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -24,12 +24,12 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.good.example.contributor.jhawkins.appkineticsworkflow</string>
+			<string>com.good.example.contributor.jhawkins.enterprise</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.good.example.contributor.jhawkins.appkineticsworkflow.sc</string>
-				<string>com.good.example.contributor.jhawkins.appkineticsworkflow.sc2</string>
-				<string>com.good.example.contributor.jhawkins.appkineticsworkflow.sc2.1.0.0.0</string>
+				<string>com.good.example.contributor.jhawkins.enterprise.sc2</string>
+				<string>com.good.example.contributor.jhawkins.enterprise.sc</string>
+				<string>com.good.example.contributor.jhawkins.enterprise.sc2.1.0.0.0</string>
 				<string>com.good.gd.discovery</string>
 			</array>
 		</dict>
@@ -37,7 +37,7 @@
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>GDApplicationID</key>
-	<string>com.good.example.contributor.jhawkins.appkineticsworkflow</string>
+	<string>com.good.example.contributor.jhawkins.enterprise</string>
 	<key>GDApplicationVersion</key>
 	<string>1.0.0.0</string>
 	<key>GDConsoleLogger</key>
@@ -46,25 +46,8 @@
 	</array>
 	<key>GDLibraryMode</key>
 	<string>GDEnterprise</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeIconFiles</key>
-			<array/>
-			<key>LSHandlerRank</key>
-			<string>Default</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>public.data</string>
-			</array>
-		</dict>
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UIMainStoryboardFile</key>
-	<string>Main_iPhone</string>
-	<key>UIMainStoryboardFile~ipad</key>
-	<string>Main_iPad</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

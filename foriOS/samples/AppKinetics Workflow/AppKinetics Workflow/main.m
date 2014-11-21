@@ -26,7 +26,6 @@
 int main(int argc, char* argv[])
 {
     @autoreleasepool {
-        [GDiOS initializeWithClassNameConformingToUIApplicationDelegate:@"AppDelegate"];
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }

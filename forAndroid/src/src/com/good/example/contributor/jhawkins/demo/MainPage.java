@@ -106,15 +106,19 @@ public class MainPage implements UserInterface {
     
     public MainPage setWebView(WebView webView)
     {
-    	this.webView = webView;
-		reloadHTML();
+    	if (this.webView != webView) {
+    		this.webView = webView;
+    		reloadHTML();
+    	}
         return this;
     }
     
     public MainPage setActivity(Activity activity)
     {
-    	this.activity = activity;
-		reloadHTML();
+    	if (this.activity != activity) {
+    		this.activity = activity;
+    		reloadHTML();
+    	}
     	return this;
     }
     

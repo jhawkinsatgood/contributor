@@ -30,6 +30,7 @@ typedef struct PROVIDER_LOOKUP {
 @interface gdDispatcher()
 @property (strong, nonatomic) NSMutableArray *providers;
 @property(strong,nonatomic) GDService *gdService;
+@property(strong, nonatomic) GDServiceClient *gdServiceClient;
 -(instancetype)init;
 -(provider_lookup *)lookupProvider:(gdRequest *)request;
 @end
@@ -53,6 +54,8 @@ typedef struct PROVIDER_LOOKUP {
     _providers = [NSMutableArray new];
     _gdService = [GDService new];
     _gdService.delegate = self;
+    _gdServiceClient = [GDServiceClient new];
+    _gdServiceClient.delegate = self;
     return self;
 }
 
@@ -164,6 +167,17 @@ typedef struct PROVIDER_LOOKUP {
     }
     
     free(lookup);
+}
+
+- (void) GDServiceClientDidReceiveFrom: (NSString *) application
+                            withParams: (id) params
+                       withAttachments: (NSArray *) attachments
+              correspondingToRequestID: (NSString *) requestID
+{
+    NSLog(
+          @"GDServiceClientDidReceiveFrom:\napplication \"%@\"\n"
+          @"requestID \"%@\"\nparams \"%@\"\n",
+          application, requestID, params);
 }
 
 @end

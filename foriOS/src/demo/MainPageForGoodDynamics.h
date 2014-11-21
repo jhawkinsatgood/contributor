@@ -24,8 +24,13 @@
 
 @interface MainPageForGoodDynamics : NSObject
 @property (strong, nonatomic, readonly) MainPage *mainPage;
-@property (weak, nonatomic) UIWebView *uiWebView;
 @property (nonatomic, assign, readonly) BOOL hasAuthorized;
+
+@property (
+           weak, nonatomic, setter=setUIApplicationDelegate:
+           ) id<UIApplicationDelegate> uiApplicationDelegate;
+@property (weak, nonatomic, setter=setUIWebView:) UIWebView *uiWebView;
+@property (strong, nonatomic) NSString *storyboardName;
 
 +(MainPageForGoodDynamics *)sharedInstance;
 -(void)setUp;

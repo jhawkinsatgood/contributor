@@ -18,3 +18,16 @@ on an emulator or real device.
 
 For general details about Good Dynamics contributor code see the readme file in
 the parent repository.
+
+Compatibility
+-------------
+The contributor code has been tested in the following environment.
+
+Component                       | Version
+--------------------------------|--------
+Android Developer Tools         | 23.0.2
+Android SDK Tools               | 23.0.5
+Physical device running Android | 4.4.2
+Good Dynamics SDK for Android   | 1.9.1162
+Good Control and Good Proxy     | 1.8.42
+OS X                            | 10.9.5

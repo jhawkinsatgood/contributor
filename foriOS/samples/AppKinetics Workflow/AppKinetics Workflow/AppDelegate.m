@@ -34,7 +34,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     GDiOS *gdRuntime = [GDiOS sharedInstance];
-    
+
     MainPage *mainPage = [[MainPageForGoodDynamics sharedInstance] mainPage];
     
     // The mainBundle is used for a string that is passed to the user interface
@@ -51,8 +51,10 @@
     
     [gdRuntime configureUIWithLogo:@"workflowlogo_xcf.png"
                             bundle:nil
-                             color:[UIColor colorWithWhite:0.0 alpha:1.0]];
-    
+                             color:[UIColor blackColor]];
+
+    [MainPageForGoodDynamics sharedInstance].storyboardName = @"MainStoryboard";
+    [MainPageForGoodDynamics sharedInstance].uiApplicationDelegate = self;
     // The next line will attach a GD authorization listener that:
     // -   Gets a WebView setting from the ViewController and applies it to the
     //     MainPage instance.

@@ -27,7 +27,6 @@
 
 @interface gdRequest()
 @property(strong, nonatomic) PathStore *store;
-@property(strong, nonatomic) GDServiceClient *gdServiceClient;
 -(void) _setParameter:(id)value top:(NSArray *)top path:(NSArray *)path;
 -(void) _setParameterAppend:(NSArray *)values top:(NSArray *)top path:(NSArray *)path;
 -(id)getSendParameter;
@@ -39,7 +38,6 @@
 @implementation gdRequest
 
 @synthesize store;
-@synthesize gdServiceClient;
 
 - (instancetype) init
 {
@@ -272,18 +270,18 @@
 {
     // Execute an AppKinetics service discovery query.
     NSArray *provider_details = [[GDiOS sharedInstance]
-     getApplicationDetailsForService:[self getServiceID]
-                          andVersion:[self getServiceVersion]
-                             andType:GDServiceProviderApplication];
+                                 getServiceProvidersFor:[self getServiceID]
+                                 andVersion:[self getServiceVersion]
+                                 andType:GDServiceProviderApplication];
 
     // Store the results in an array in the StorePath
     for (int i=0; i<[provider_details count]; i++) {
-        GDAppDetail *provideri = provider_details[i];
+        GDServiceProvider *provideri = provider_details[i];
         [store pathSet:[[[[[[PathStore alloc] initAsDictionary]
-                    pathSet:[provideri applicationId], @"applicationId", nil]
+                    pathSet:[provideri identifier], @"identifier", nil]
                     pathSet:[provideri name], @"name", nil]
                     pathSet:[provideri address], @"address", nil]
-                    pathSet:[provideri versionId], @"versionId", nil]
+                    pathSet:[provideri version], @"version", nil]
                  a:@[@"Request", @"Provider", @"Query",
                      [NSNumber numberWithInt:i]]];
     }
@@ -367,7 +365,6 @@
     
     NSError *myError;
     NSString *requestID;
-    gdServiceClient.delegate = self;
     BOOL sendOK = [GDServiceClient sendTo:[self getApplication]
                               withService:[self getServiceID]
                               withVersion:[self getServiceVersion]
@@ -402,17 +399,6 @@
     if (error != nil) *error = myError;
     [store pathSet:[myError description], @"Reply", @"LastError", nil];
     return [myError description];
-}
-
-- (void) GDServiceClientDidReceiveFrom: (NSString *) application
-                            withParams: (id) params
-                       withAttachments: (NSArray *) attachments
-              correspondingToRequestID: (NSString *) requestID
-{
-    NSLog(
-          @"GDServiceClientDidReceiveFrom:\napplication \"%@\"\n"
-          @"requestID \"%@\"\nparams \"%@\"\n",
-          application, requestID, params);
 }
 
 @end

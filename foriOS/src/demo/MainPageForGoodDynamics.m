@@ -27,7 +27,8 @@
 @interface MainPageForGoodDynamics()
 -(instancetype)init;
 @property (nonatomic, assign) BOOL hasSetUp;
--(void)load;
+@property (nonatomic, assign) BOOL hasLoadedStoryBoard;
+-(void)didAuthorize;
 @end
 
 @implementation MainPageForGoodDynamics
@@ -49,23 +50,60 @@
     _mainPage = [MainPage new];
     _hasAuthorized = NO;
     _hasSetUp = NO;
+
     _uiWebView = nil;
+    _uiApplicationDelegate = nil;
+    _storyboardName = nil;
     return self;
 }
 
--(void)setUiWebView:(UIWebView *)uiWebView
+-(void)setUIApplicationDelegate:(id<UIApplicationDelegate>)uiApplicationDelegate
 {
-    _uiWebView = uiWebView;
-    [self load];
+    _uiApplicationDelegate = uiApplicationDelegate;
+    [self didAuthorize];
 }
 
--(void)load
+-(void)setUIWebView:(UIWebView *)uiWebView
 {
-    if (self.uiWebView && _hasAuthorized) {
-        // Following line also sets mainPage as the UIWebView delegate.
-        [_mainPage setUIWebView:self.uiWebView];
-        [_mainPage load];
+    _uiWebView = uiWebView;
+    [self didAuthorize];
+}
+
+-(void)setStoryboardName:(NSString *)storyboardName
+{
+    _storyboardName = storyboardName;
+    [self didAuthorize];
+}
+
+-(void)didAuthorize
+{
+    if (_hasAuthorized) {
+        if (self.uiWebView) {
+            // Following line also sets mainPage as the UIWebView delegate.
+            [_mainPage setUIWebView:self.uiWebView];
+            [_mainPage load];
+        }
+        else {
+            if (self.storyboardName != nil && !_hasLoadedStoryBoard) {
+                // If a storyboard has been specified but not yet loaded, then
+                // load it now.
+                UIStoryboard *uiStoryboard =
+                [UIStoryboard storyboardWithName:self.storyboardName
+                                          bundle:nil];
+                _hasLoadedStoryBoard = YES;
+                
+                // Next line kicks off loading of the view controller, which
+                // will in turn result in the uiWebView property being set.
+                _uiApplicationDelegate.window.rootViewController =
+                [uiStoryboard instantiateInitialViewController];
+            }
+            // If the end user has authorised, but there is no uiWebView, and
+            // there is no storyboard specified or the storyboard is already
+            // supposed to have loaded, then do nothing.
+        }
     }
+    
+    // If the end user has not yet authorised, do nothing.
 }
 
 -(void)setUp
@@ -86,7 +124,7 @@
          addObserverForEventType:GDAppEventAuthorized
          usingBlock:GDRUNTIMEOBSERVER(event) {
              _hasAuthorized = YES;
-             [self load];
+             [self didAuthorize];
          }];
         _hasSetUp = YES;
     }

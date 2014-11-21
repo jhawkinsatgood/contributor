@@ -24,9 +24,9 @@ package com.good.example.contributor.jhawkins.appkineticsworkflow;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.app.Activity;
+import android.graphics.Color;
 
 import com.good.gd.GDAndroid;
-import com.good.gd.GDUIColorTheme;
 
 import com.good.example.contributor.jhawkins.demo.DemoConsumeOpenHTTPURL;
 import com.good.example.contributor.jhawkins.demo.DemoConsumeSendEmail;
@@ -69,7 +69,8 @@ public class MainActivity extends Activity {
 
         GDAndroid.getInstance().configureUI(
     			getResources().getDrawable(R.drawable.workflowlogo_xcf),
-    			GDUIColorTheme.GDUIWhiteTheme);
+    			getResources().getDrawable(R.drawable.workflowlogo_xcf),
+    			Color.BLACK );
 
         GDAndroid.getInstance().activityInit(this);
 	}

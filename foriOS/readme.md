@@ -16,3 +16,16 @@ simulator or real device.
 
 For general details about Good Dynamics contributor code see the readme file in
 the parent repository.
+
+Compatibility
+-------------
+The contributor code has been tested in the following environment.
+
+Component                       | Version
+--------------------------------|--------
+Xcode                           | 6.1
+iOS simulator running iOS       | 8.1
+iPad device running iOS         | 8.1
+Good Dynamics SDK for iOS       | 1.9.4340
+Good Control and Good Proxy     | 1.8.42
+OS X                            | 10.9.5

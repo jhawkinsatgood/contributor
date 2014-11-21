@@ -24,9 +24,9 @@ package com.good.example.contributor.jhawkins.enterprise;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.app.Activity;
+import android.graphics.Color;
 
 import com.good.gd.GDAndroid;
-import com.good.gd.GDUIColorTheme;
 
 import com.good.example.contributor.jhawkins.demo.MainPageForGoodDynamics;
 import com.good.example.contributor.jhawkins.demo.DemoApplicationPolicies;
@@ -68,7 +68,8 @@ public class MainActivity extends Activity {
 
         GDAndroid.getInstance().configureUI(
     			getResources().getDrawable(R.drawable.enterpriselogo_xcf),
-    			GDUIColorTheme.GDUIWhiteTheme);
+    			getResources().getDrawable(R.drawable.enterpriselogo_xcf),
+    			Color.BLACK);
 
         GDAndroid.getInstance().activityInit(this);
 	}

@@ -51,13 +51,18 @@ See also the `readme.md` file in the repository directory for this file.
             <pe ref="photoUpdate" depends="canUpdate" />
         </pview>
 
+        <pview type="tabbed" key="json">
+            <title>JSON</title>
+            <pe ref="json0" />
+        </pview>
+
         <pe ref="policyVersion" />
     </pview>
 
     <setting name="policyVersion" >
         <hidden>
             <key>version</key>
-            <value>2.1</value>
+            <value>2.2</value>
         </hidden>
     </setting>
 
@@ -113,6 +118,19 @@ See also the `readme.md` file in the repository directory for this file.
             <label>Can Post Photos</label>
             <value>false</value>
         </checkbox>
+    </setting>
+
+    <setting name="json0" >
+        <textarea>
+            <key>json0</key>
+            <label>JSON:</label>
+            <value>{
+"ShareURLs": [
+    "https://hub.corp.good.com/architecture-public/"
+]
+}</value>
+            <maxlength>4096</maxlength>
+        </textarea>
     </setting>
 
 </apd:AppPolicyDefinition>

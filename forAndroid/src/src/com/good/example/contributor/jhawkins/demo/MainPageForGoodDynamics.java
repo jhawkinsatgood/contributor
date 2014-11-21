@@ -81,9 +81,8 @@ public class MainPageForGoodDynamics {
 	
 	public void clear()
 	{
-		this.webView = null;
 		this.activity = null;
-		MainPage.getInstance().setWebView(null).setActivity(null);
+		MainPage.getInstance().setActivity(null);
 	}
 
 	public MainPage getMainPage() {

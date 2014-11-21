@@ -22,7 +22,7 @@
 #import <Foundation/Foundation.h>
 #import <GD/GDServices.h>
 
-@interface gdRequest : NSObject <GDServiceClientDelegate>
+@interface gdRequest : NSObject
 
 -(instancetype)storeFrom:(gdRequest *)request;
 -(NSString *)getServiceID;

@@ -101,12 +101,12 @@ sub help
   print <<HELP;
 $command_line_usage
 Where:
-  -a specifies the address of the Push Channel service.
+  -a specifies the address of the Good Dynamics services access point.
   If omitted, gdmdc.good.com is the default, which is the Good Dynamics Network
   Operation Center (NOC). If using a Good Proxy as the access point, specify
   the IP address or server address here.
 
-  -p specifies the port number of the Push Channel service.
+  -p specifies the port number of the Good Dynamics services access point.
   If omitted, 443 is the default.
   When using a Good Proxy, specify 17080 to use HTTP or 17433 to use HTTPS.
   
@@ -129,7 +129,7 @@ Where:
 
   The next command line parameter specifies the execution mode.
   "one" mode sends one Push Channel message. This causes a checkToken and then
-  a notify command to be sent to the Push Channel service.
+  a notify command to be sent to the Good Dynamics services access point.
   <token> is the Push Channel token, which must have been obtained by a mobile
           GD application using the GD Runtime API for the mobile platform:
             GDPushChannel when using GD for iOS.
@@ -154,6 +154,8 @@ Where:
   "authserv" mode will expect GD authentication token parameters to be sent by
   the client, and will then take actions such as verifying tokens. This is a
   listening mode.
+  If a Good Dynamics services access point has not been specified, this mode
+  uses the inbound IP address by default.
 
   In listening modes:
   <port> is the optional port on the local machine to which minipush will
@@ -434,6 +436,7 @@ CONTENT
       elsif ($sockLine =~ /^$/) {
         if ($cmd eq 'TOKEN') {
           print 'Token received "', $token, "\"\nValidating...\n";
+          GDAP::useInboundAddrIfUnset $sock;
           my %cmdret = GDAP::authToken $token;
           my $response = 'OK';
           if ($cmdret{authResponse} != 100) {
@@ -466,7 +469,7 @@ CONTENT
     # : Validate the token.
     # : Respond with one of the following:
     # :     TOKEN OK if the token is OK and didn't have a challenge.
-    # :     TOKEN NG if the toekn is not valid.
+    # :     TOKEN NG if the token is not valid.
     # :     CHALLENGE OK if the token is OK and the challenge was recognised.
     # : Close the socket.
     # CHALLENGE
@@ -611,8 +614,8 @@ sub sendSockum
     my %gdap;
     # Service parameters associative array, containing:
     #   Mandatory:
-    #   PCSip - The address of the Push Channel service.
-    #   PCSport - The port number of the Push Channel service.
+    #   PCSip - The address of the Good Dynamics services access point.
+    #   PCSport - The port number of the Good Dynamics services access point.
     #   pushToken - The push token, obtained by the mobile application.
     #   PCSSSL - 1 to use SSL, 0 to use a plain socket.
     #   Optional:
@@ -620,6 +623,19 @@ sub sendSockum
     #   SSL_cipher_list - SSL cipher list string
 
     my $socket = undef;
+    
+    my $noAddress = 1;
+    my $noPort = 1;
+    
+    sub setSSLFromPort
+    {
+        if ( ($gdap{PCSport} % 1000 == 443) || ($gdap{PCSport} % 1000 == 433) ) {
+          $gdap{PCSSSL} = 1;
+        }
+        else {
+          $gdap{PCSSSL} = 0;
+        }
+    }
 
     sub optsstring
     {
@@ -630,7 +646,8 @@ sub sendSockum
     {
         if ( (exists $opts{'p'}) && ($opts{'p'} =~ /[^0-9]/) ) {
             print STDERR
-            "Push Channel service port apparently not numeric \"$opts{'p'}\".\n";
+              'Good Dynamics services access point port apparently not numeric "',
+              $opts{'p'}, "\".\n";
             return undef;
         }
         %gdap = (
@@ -648,9 +665,7 @@ sub sendSockum
         if (exists $opts{'c'}) {
             $gdap{SSL_cipher_list} = $opts{'c'};
         }
-        if ( ($gdap{PCSport} % 1000 == 443) || ($gdap{PCSport} % 1000 == 433) ) {
-            $gdap{PCSSSL} = 1;
-        }
+        setSSLFromPort;
         if (exists $opts{'s'}) {
             if ($opts{'s'} =~ /[^0-9]/) {
                 print STDERR
@@ -668,7 +683,29 @@ sub sendSockum
             }
         }
         $gdap{notifyOnly} = exists $opts{'n'};
+        $noAddress = ! exists $opts{'a'};
+        $noPort = ! exists $opts{'p'};
         return 1;
+    }
+    
+    sub useInboundAddrIfUnset
+    {
+      my $inboundSocket = shift;
+      
+      my $ret = 0;
+      
+      if ($noAddress) {
+        $gdap{PCSip} = $inboundSocket->peerhost();
+        $ret = 1;
+        print STDOUT
+          'Good Proxy address set from inbound socket "', $gdap{PCSip}, "\".\n";
+      }
+      if ($noPort) {
+        $gdap{PCSport} = 17080;
+        setSSLFromPort;
+      }
+
+      return $ret;
     }
     
     sub settoken
@@ -751,13 +788,24 @@ ONEMESSAGE
     sub verifyGDAuthToken
     {
         my $token = shift;
-        print $socket join $ln,
-        "GET /verifyGDAuthToken HTTP/1.1",
-        "Host: $gdap{PCSip}:$gdap{PCSport}",
-        "X-Good-GD-AuthToken: $token",
-        "",
-        ""
-        ;
+        
+        my @cmd = (
+          "GET /verifyGDAuthToken HTTP/1.1",
+          "Host: $gdap{PCSip}:$gdap{PCSport}",
+          "X-Good-GD-AuthToken: $token",
+          "",
+          ""
+        );
+        print $socket join $ln, @cmd;
+        
+        # Dump the command too.
+        print STDOUT "verifyGDAuthToken. Sending:\n";
+        for(my $i=0; $i<@cmd; $i++) {
+          # Skip dumping the last element if it is blank.
+          next if ($i + 1 >= @cmd && $cmd[$i] eq '');
+          print STDOUT sprintf("%3d", 1 + $i), ' ', $cmd[$i], "\n";
+        }
+        print STDOUT "\n";
     }
     
     ## consumeGNP - Read the result of a command sent to a Push Channel service.
@@ -806,13 +854,15 @@ ONEMESSAGE
 
     sub openPCSsocket
     {
-        # Open socket to communicate with the Push Channel service.
+        # Open socket to communicate with the Good Dynamics services access
+        # point.
         my %sockArgs = (
         PeerAddr => $gdap{PCSip}, PeerPort => $gdap{PCSport}, Proto => 'tcp'
         );
         if ( $gdap{PCSSSL} == 1 ) {
-            print "\nOpening SSL socket to Push Channel service: " .
-            "$gdap{PCSip} $gdap{PCSport} ...\n";
+            print "\n",
+              'Opening SSL socket to Good Dynamics services access point: ',
+              $gdap{PCSip}, ' ', $gdap{PCSport}, " ...\n";
 #            $sockArgs{SSL_verify_mode} = 0x01; # Verify peer.
             if ( exists $gdap{SSL_version}) {
                 $sockArgs{SSL_version} = $gdap{SSL_version};
@@ -824,14 +874,17 @@ ONEMESSAGE
 # print STDERR 'IO::Socket::SSL::errstr() "', IO::Socket::SSL::errstr(), "\"\n";
         }
         else {
-            print "\nOpening plain socket to Push Channel service: " .
-            "$gdap{PCSip} $gdap{PCSport} ...\n";
+            print "\n",
+              'Opening plain socket to Good Dynamics services access point: ',
+              $gdap{PCSip}, ' ', $gdap{PCSport}, " ...\n";
             $socket = IO::Socket::INET->new( %sockArgs );
         }
-        die "Could not open socket to Push Channel service; $!\n" unless $socket;
+        die
+          'Could not open socket to Good Dynamics services access point. ',
+          $!, "\n" unless $socket;
         
         $socket->autoflush(1);
-        print "Socket to Push Channel service open\n";
+        print "Socket to Good Dynamics services access point open\n";
     }
     
     # pushMessage - Send a Push Channel notification message.
@@ -872,7 +925,7 @@ ONEMESSAGE
             # Check the token.
             openPCSsocket;
             $lastCmd = checkToken;
-            %checkTokenResp = MINIPUSH::recvDump($socket, 'consumeGNP'); # consumeGNP();
+            %checkTokenResp = MINIPUSH::recvDump($socket, 'consumeGNP');
             print "checkToken response from Push Channel service:\n" .
             "$checkTokenResp{response}\nClosing socket.\n";
             close $socket;
@@ -891,8 +944,8 @@ ONEMESSAGE
             }
             else {
                 print
-                "Push Channel message failed $notifyResp{gnpStatus}" .
-                " \"$notifyResp{gnpStatusText}\".\nClosing socket.";
+                  "Push Channel message failed $notifyResp{gnpStatus}" .
+                  " \"$notifyResp{gnpStatusText}\".\nClosing socket.";
             }
             close $socket;
         }
@@ -973,7 +1026,9 @@ ONEMESSAGE
         my $acceptSock;
         while( $acceptSock = $listenSock->accept() ) {
             $acceptSock->autoflush(1);
-            print "Client connection\n";
+            my $peerAddress = $acceptSock->peerhost();
+            my $peerPort = $acceptSock->peerport();
+            print "Client connection \"", $peerAddress, "\" ", $peerPort, "\n";
             print "Sleeping for 1s ...\n";
             sleep 1;
             print "Awake\n";

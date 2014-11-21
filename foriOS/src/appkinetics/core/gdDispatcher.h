@@ -23,7 +23,10 @@
 #import <GD/GDServices.h>
 #import "gdProvider.h"
 
-@interface gdDispatcher : NSObject <GDServiceDelegate>
+@interface gdDispatcher : NSObject
+<GDServiceDelegate,  GDServiceClientDelegate>
+
 +(instancetype)sharedInstance;
 -(instancetype)register:(gdProvider *)provider;
+
 @end

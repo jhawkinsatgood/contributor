@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8161B7041A169EFB00FABCAA /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8161B7031A169EFB00FABCAA /* MainStoryboard.storyboard */; };
 		81AB42F919B4860100BC9E53 /* MainPageForGoodDynamics.m in Sources */ = {isa = PBXBuildFile; fileRef = 81AB42F819B4860100BC9E53 /* MainPageForGoodDynamics.m */; };
 		81AB430019B487B100BC9E53 /* gdRuntimeDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 81AB42FE19B487B100BC9E53 /* gdRuntimeDispatcher.m */; };
 		81CB20F119713E1900733EAE /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20EC19713E1900733EAE /* libstdc++.dylib */; };
@@ -14,7 +15,6 @@
 		81CB20F319713E1900733EAE /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20EE19713E1900733EAE /* MessageUI.framework */; };
 		81CB20F419713E1900733EAE /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20EF19713E1900733EAE /* MobileCoreServices.framework */; };
 		81CB20F519713E1900733EAE /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81CB20F019713E1900733EAE /* QuickLook.framework */; };
-		81CB20F719713FB800733EAE /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 81CB20F619713FB800733EAE /* default.xcconfig */; };
 		9228072B198A8D680033F4B0 /* MainPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9228072A198A8D680033F4B0 /* MainPageViewController.m */; };
 		92591D0D1923995C0036AADA /* gdRequestOpenHTTPURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 92591D0C1923995C0036AADA /* gdRequestOpenHTTPURL.m */; };
 		92591D101923A0280036AADA /* DemoConsumeOpenHTTPURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 92591D0F1923A0280036AADA /* DemoConsumeOpenHTTPURL.m */; };
@@ -31,8 +31,6 @@
 		92C96BCF1922096A0092DBE8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BCD1922096A0092DBE8 /* InfoPlist.strings */; };
 		92C96BD11922096A0092DBE8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C96BD01922096A0092DBE8 /* main.m */; };
 		92C96BD51922096A0092DBE8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C96BD41922096A0092DBE8 /* AppDelegate.m */; };
-		92C96BD81922096A0092DBE8 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BD61922096A0092DBE8 /* Main_iPhone.storyboard */; };
-		92C96BDB1922096A0092DBE8 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BD91922096A0092DBE8 /* Main_iPad.storyboard */; };
 		92C96BE31922096B0092DBE8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92C96BE21922096B0092DBE8 /* Images.xcassets */; };
 		92C96C0219220CB80092DBE8 /* GDAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 92C96C0119220CB80092DBE8 /* GDAssets.bundle */; };
 		92C96C5719220D8A0092DBE8 /* gdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C96C2119220D8A0092DBE8 /* gdDispatcher.m */; };
@@ -52,6 +50,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8151CB2E1A16694C00CC6E70 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8161B7031A169EFB00FABCAA /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		81AB42F719B4860100BC9E53 /* MainPageForGoodDynamics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainPageForGoodDynamics.h; sourceTree = "<group>"; };
 		81AB42F819B4860100BC9E53 /* MainPageForGoodDynamics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainPageForGoodDynamics.m; sourceTree = "<group>"; };
 		81AB42FD19B487B100BC9E53 /* gdRuntimeDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdRuntimeDispatcher.h; sourceTree = "<group>"; };
@@ -80,14 +80,11 @@
 		92C96BC41922096A0092DBE8 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		92C96BC61922096A0092DBE8 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		92C96BC81922096A0092DBE8 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		92C96BCC1922096A0092DBE8 /* AppKinetics Workflow-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AppKinetics Workflow-Info.plist"; sourceTree = "<group>"; };
 		92C96BCE1922096A0092DBE8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		92C96BD01922096A0092DBE8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		92C96BD21922096A0092DBE8 /* AppKinetics Workflow-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppKinetics Workflow-Prefix.pch"; sourceTree = "<group>"; };
 		92C96BD31922096A0092DBE8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		92C96BD41922096A0092DBE8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		92C96BD71922096A0092DBE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		92C96BDA1922096A0092DBE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		92C96BE21922096B0092DBE8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		92C96BE91922096B0092DBE8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		92C96C0119220CB80092DBE8 /* GDAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GDAssets.bundle; path = System/Library/Frameworks/GD.framework/Resources/GDAssets.bundle; sourceTree = SDKROOT; };
@@ -212,8 +209,7 @@
 				92C96BE21922096B0092DBE8 /* Images.xcassets */,
 				92C96BDD1922096B0092DBE8 /* Resources */,
 				92C96BCB1922096A0092DBE8 /* Supporting Files */,
-				92C96BD61922096A0092DBE8 /* Main_iPhone.storyboard */,
-				92C96BD91922096A0092DBE8 /* Main_iPad.storyboard */,
+				8161B7031A169EFB00FABCAA /* MainStoryboard.storyboard */,
 			);
 			path = "AppKinetics Workflow";
 			sourceTree = "<group>";
@@ -221,7 +217,7 @@
 		92C96BCB1922096A0092DBE8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				92C96BCC1922096A0092DBE8 /* AppKinetics Workflow-Info.plist */,
+				8151CB2E1A16694C00CC6E70 /* Info.plist */,
 				92C96BCD1922096A0092DBE8 /* InfoPlist.strings */,
 				92C96BD01922096A0092DBE8 /* main.m */,
 				92C96BD21922096A0092DBE8 /* AppKinetics Workflow-Prefix.pch */,
@@ -286,12 +282,12 @@
 			children = (
 				92C96C2919220D8A0092DBE8 /* gdProviderTransferFile.h */,
 				92C96C2A19220D8A0092DBE8 /* gdProviderTransferFile.m */,
+				92591D0B1923995C0036AADA /* gdRequestOpenHTTPURL.h */,
+				92591D0C1923995C0036AADA /* gdRequestOpenHTTPURL.m */,
 				92C96C2F19220D8A0092DBE8 /* gdRequestSendEmail.h */,
 				92C96C3019220D8A0092DBE8 /* gdRequestSendEmail.m */,
 				92C96C3119220D8A0092DBE8 /* gdRequestTransferFile.h */,
 				92C96C3219220D8A0092DBE8 /* gdRequestTransferFile.m */,
-				92591D0B1923995C0036AADA /* gdRequestOpenHTTPURL.h */,
-				92591D0C1923995C0036AADA /* gdRequestOpenHTTPURL.m */,
 			);
 			path = specific;
 			sourceTree = "<group>";
@@ -363,7 +359,7 @@
 		92C96BA91922096A0092DBE8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Good Technology";
 			};
 			buildConfigurationList = 92C96BAC1922096A0092DBE8 /* Build configuration list for PBXProject "AppKinetics Workflow" */;
@@ -389,12 +385,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8161B7041A169EFB00FABCAA /* MainStoryboard.storyboard in Resources */,
 				92C96C0219220CB80092DBE8 /* GDAssets.bundle in Resources */,
 				92C96C6C1922268C0092DBE8 /* workflowlogo_xcf.png in Resources */,
-				81CB20F719713FB800733EAE /* default.xcconfig in Resources */,
-				92C96BDB1922096A0092DBE8 /* Main_iPad.storyboard in Resources */,
 				92C96BE31922096B0092DBE8 /* Images.xcassets in Resources */,
-				92C96BD81922096A0092DBE8 /* Main_iPhone.storyboard in Resources */,
 				92C96BCF1922096A0092DBE8 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -440,22 +434,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		92C96BD61922096A0092DBE8 /* Main_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				92C96BD71922096A0092DBE8 /* Base */,
-			);
-			name = Main_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		92C96BD91922096A0092DBE8 /* Main_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				92C96BDA1922096A0092DBE8 /* Base */,
-			);
-			name = Main_iPad.storyboard;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -497,6 +475,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -537,6 +516,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -554,7 +534,7 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AppKinetics Workflow/AppKinetics Workflow-Prefix.pch";
-				INFOPLIST_FILE = "AppKinetics Workflow/AppKinetics Workflow-Info.plist";
+				INFOPLIST_FILE = "AppKinetics Workflow/Info.plist";
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-lz",
@@ -572,7 +552,7 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AppKinetics Workflow/AppKinetics Workflow-Prefix.pch";
-				INFOPLIST_FILE = "AppKinetics Workflow/AppKinetics Workflow-Info.plist";
+				INFOPLIST_FILE = "AppKinetics Workflow/Info.plist";
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-lz",

@@ -28,7 +28,8 @@ import org.json.JSONObject;
 
 import com.good.example.contributor.jhawkins.pathstore.PathStore;
 import com.good.gd.GDAndroid;
-import com.good.gd.GDAppDetail;
+import com.good.gd.GDServiceProvider;
+import com.good.gd.GDServiceProviderType;
 import com.good.gd.icc.GDICCForegroundOptions;
 import com.good.gd.icc.GDService;
 import com.good.gd.icc.GDServiceClient;
@@ -291,17 +292,18 @@ public class Request implements GDServiceClientListener
     public Request queryProviders()
     {
         // Execute an AppKinetics service discovery query.
-        Vector<GDAppDetail> provider_details =
-                GDAndroid.getInstance().getApplicationDetailsForService(
-                        getServiceID(), getServiceVersion());
+        Vector<GDServiceProvider> provider_details =
+                GDAndroid.getInstance().getServiceProvidersFor(
+                        getServiceID(), getServiceVersion(),
+                        GDServiceProviderType.GDSERVICEPROVIDERAPPLICATION);
         // Store the results in an array in the PathStore
         for (int i=0; i<provider_details.size(); i++) {
-            GDAppDetail provideri = provider_details.elementAt(i);
+            GDServiceProvider provideri = provider_details.elementAt(i);
             store.pathSet( new PathStore(new JSONObject())
-                .pathSet(provideri.getApplicationId(), "applicationId")
+                .pathSet(provideri.getIdentifier(), "identifier")
                 .pathSet(provideri.getName(), "name")
                 .pathSet(provideri.getAddress(), "address")
-                .pathSet(provideri.getVersionId(), "versionId"),
+                .pathSet(provideri.getVersion(), "version"),
                 "Request", "Provider", "Query", i);
         }
 

@@ -119,6 +119,16 @@
             }];
 }
 
++(void)invokeObserver:(gdConfigurationObserver)block
+        forDictionary:(NSDictionary *)dictionary
+{
+    NSMutableDictionary *dictionaryPlus =
+    [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    [gdRuntimeDispatcher addDictionariesFromJSON:dictionaryPlus
+                                      withSuffix:@"Dictionary"];
+    block(dictionaryPlus, [gdRuntimeDispatcher JSONStringFrom:dictionaryPlus]);
+}
+
 -(id)addObserverForApplicationConfiguration:(gdConfigurationObserver)block
                                andInvokeNow:(BOOL)invokeNow
 {
@@ -238,10 +248,82 @@
                                   encoding:NSASCIIStringEncoding];
 }
 
-+(void)invokeObserver:(gdConfigurationObserver)block
-        forDictionary:(NSDictionary *)dictionary
++(NSInteger)addDictionariesFromJSON:(NSMutableDictionary *)dictionary
+                         withSuffix:(NSString *)suffix
 {
-    block(dictionary, [gdRuntimeDispatcher JSONStringFrom:dictionary]);
+    // We are going to enumerate the input dictionary. It seems like a good idea
+    // to put any new objects that we are going to create into a separate
+    // dictionary. That way there won't be any disruption of the enumeration.
+    NSMutableDictionary *adds = [NSMutableDictionary new];
+
+    // Enumeration looking for JSON starts here.
+    [dictionary enumerateKeysAndObjectsUsingBlock:
+     ^(id key_object, id value_object, BOOL *stop) {
+         // Check the key and value are both strings. If they aren't, move on.
+         if (!(
+               [value_object isKindOfClass:[NSString class]] &&
+               [key_object isKindOfClass:[NSString class]]
+         )) {
+             return;
+         }
+         NSString *value = (NSString *)value_object;
+         NSString *key = (NSString *)key_object;
+         NSString *keyToAdd = [key stringByAppendingString:suffix];
+         
+         // If the key that would be added already exists, move on.
+         if ([dictionary objectForKey:keyToAdd] != nil) {
+             return;
+         }
+         
+         // Allocate a byte buffer and copy the bytes from the value into it.
+         // The buffer will include a null terminator.
+         NSUInteger valueBufferSize = value.length + 1;
+         void *valueBuffer = malloc(valueBufferSize);
+         if (!valueBuffer) {
+             // malloc failed. Give up trying to find JSON.
+             int my_errno = errno;
+             NSLog( @"%s malloc(%lu) failed. %s.\n", __PRETTY_FUNCTION__,
+                   (unsigned long)valueBufferSize, strerror(my_errno) );
+             return;
+         }
+         BOOL ok = [value getCString:valueBuffer
+                           maxLength:valueBufferSize
+                            encoding:NSASCIIStringEncoding];
+         if (!ok) {
+             NSLog(@"%s getCString for \"%@\": \"%@\" failed.\n",
+                   __PRETTY_FUNCTION__, key, value);
+         }
+         NSData *value_data = [NSData dataWithBytesNoCopy:valueBuffer
+                                                   length:valueBufferSize - 1];
+         
+         // Attempt to read the JSON into a dictionary.
+         NSError *err;
+         NSDictionary *value_dictionary =
+         [NSJSONSerialization JSONObjectWithData:value_data
+                                         options:0
+                                           error:&err];
+    
+         if (value_dictionary == nil) {
+             // Failed to create a dictionary from the bytes in the value.
+             // If it looks like it ought to have been JSON, log an error
+             // message and skip it. Otherwise just skip it silently.
+             if ([value characterAtIndex:0] == '{') {
+                 NSLog( @"%s \"%@\":  \"%@\"\n\"%@\"\n"
+                       "JSONObjectWithData failed: %@\n.",
+                       __PRETTY_FUNCTION__, key, value, value_data, err);
+             }
+             return;
+         }
+
+         // Add the dictionary from the JSON into the adds dictionary.
+         [adds setObject:value_dictionary forKey:keyToAdd];
+     }];
+    // End of enumeration looking for JSON.
+    
+    // Add everything new into the input dictionary.
+    [dictionary addEntriesFromDictionary:adds];
+
+    return adds.count;
 }
 
 +(NSDictionary *)gdApplicationConfigWithoutDeprecations
