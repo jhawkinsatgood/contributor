@@ -81,3 +81,7 @@ the Cordova File plugin like:
 
 To fix this issue, add the CDVFile.m back to the Compile Sources in the
 application target.
+
+Sometimes other .m files get removed from the Compile Sources list in the
+platform project for iOS. You can spot them quite easily by opening the add
+sources dialog and looking for any .m files, which have a different icon.

@@ -29,7 +29,7 @@ export ORGANISATION_NAME=GoodTechnologyExample
 # download.
 export GD_PLUGIN_DIR=""
 
-# Set either of these to the empty string to disable addition of the platform
+# Set either of these to the empty string to switch off addition of the platform
 export CREATE_ANDROID="yes"
 export CREATE_IOS="yes"
 
@@ -55,7 +55,7 @@ function setAndroidDir()
         ANDROID_PATH=`dirname "$ANDROID_PATH"`
         ANDROID_PATH=`dirname "$ANDROID_PATH"`
         ANDROID_PATH="${ANDROID_PATH}/extras/good/dynamics_sdk/libs"
-        cd $ANDROID_PATH
+        cd "$ANDROID_PATH"
         if test -d gd;
         then
             GD_ANDROID_DIR="${PWD}/gd"
@@ -65,7 +65,7 @@ function setAndroidDir()
                 "\"${ANDROID_PATH}\" directory."
         fi
     fi
-    cd $SAVE_DIR
+    cd "$SAVE_DIR"
 }
 
 function setAndroidRelative()
@@ -227,14 +227,16 @@ SETTINGS.JSON
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <uses-sdk
-            android:minSdkVersion="10"/>
+        android:minSdkVersion="19" 
+        android:targetSdkVersion="21" />
 
     <application
-            android:enabled="true"
-            android:label="@string/app_name"
-            android:icon="@drawable/icon"
-            android:hardwareAccelerated="true"
-            android:debuggable="true" >
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        android:enabled="true"
+        android:hardwareAccelerated="true" >
+
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name"
@@ -261,11 +263,26 @@ ANDROIDMANIFEST.XML
     then
         # Enable GD for iOS
         cd "${GD_PLUGIN_DIR}/iOS/SampleApplications/UpdateApp-Cordova3x/"
-        bash ./FIXEDgdEnableApp.sh -c "$APP_ID_PREFIX" -g "$ORGANISATION_NAME" \
+        ENABLESH='./FIXEDgdEnableApp.sh'
+        if test '!' -f "$ENABLESH" ;
+        then
+            echo 'No FIXED script for iOS. Assuming fixed version was installed.'
+            ENABLESH='./gdEnableApp.sh'
+        fi
+        bash "$ENABLESH" -c "$APP_ID_PREFIX" -g "$ORGANISATION_NAME" \
             -i "$APP_ID" -p "${PROJECT_DIR}/platforms/ios/"
         
         cd "$PROJECT_DIR"
-        echo "Fixing deployment target."
+
+        echo "Updating to installed CordovaLib"
+        cordova platform update ios
+        
+        echo "Refreshing contributor plugin to fix Info.plist"
+        cordova plugin remove com.good.example.contributor.jhawkins
+        cordova plugin add ../../src/com.good.example.contributor.jhawkins
+
+
+        echo "Fixing deployment target, if necessary."
         sed -i \
             -e 's/IPHONEOS_DEPLOYMENT_TARGET = 5\.0;/IPHONEOS_DEPLOYMENT_TARGET = 6.0;/g' \
             "platforms/ios/${APP_NAME}.xcodeproj/project.pbxproj"
