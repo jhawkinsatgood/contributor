@@ -1,5 +1,8 @@
-Good Dynamics Contributor Code
-==============================
+Good Dynamics Contributor Code (deprecated)
+===========================================
+
+This repository is deprecated. Use [https://github.com/jhawkinsatgood/gdcontributor](https://github.com/jhawkinsatgood/gdcontributor) instead.
+
 This repository contains Good Dynamics&trade; contributor sample code. Good
 Dynamics (GD) is the Good Technology&trade; platform for secure mobile
 application development. To make use of the sample code in this repository you
