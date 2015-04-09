@@ -1,5 +1,7 @@
-Good Dynamics Contributor Code for Servers
-==========================================
+Good Dynamics Contributor Code for Servers (deprecated)
+=======================================================
+This repository is deprecated. Use [https://github.com/jhawkinsatgood/gdcontributor](https://github.com/jhawkinsatgood/gdcontributor) instead.
+
 This directory contains contributor code for use on the server side of a Good
 Dynamics (GD) deployment.
 
