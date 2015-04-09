@@ -1,5 +1,7 @@
-Good Dynamics Contributor Code for iOS
-======================================
+Good Dynamics Contributor Code for iOS (deprecated)
+===================================================
+This repository is deprecated. Use [https://github.com/jhawkinsatgood/gdcontributor](https://github.com/jhawkinsatgood/gdcontributor) instead.
+
 To use the contributor applications and code for iOS with Apple Xcode for the
 first time, the following steps can be followed.
 
