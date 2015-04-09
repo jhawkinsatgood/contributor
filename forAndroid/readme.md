@@ -1,5 +1,7 @@
-Good Dynamics Contributor Code for Android
-==========================================
+Good Dynamics Contributor Code for Android (deprecated)
+=======================================================
+This repository is deprecated. Use [https://github.com/jhawkinsatgood/gdcontributor](https://github.com/jhawkinsatgood/gdcontributor) instead.
+
 To use the contributor applications and code for Android with ADT or Eclipse for
 the first time, the following steps can be followed.
 
